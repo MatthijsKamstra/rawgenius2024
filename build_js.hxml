@@ -1,0 +1,9 @@
+--library cc-go
+-cp src
+-main Main
+-js docs/cc-go-example.js
+-D source-map-content
+-D state=debug
+-debug
+
+

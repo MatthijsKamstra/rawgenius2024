@@ -1,3 +1,4 @@
+--library cc-go
 -cp src
 -D analyzer-optimize
 -main Main

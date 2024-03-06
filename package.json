@@ -1,0 +1,15 @@
+{
+  "name": "rawgenius2024",
+  "version": "1.0.0",
+  "description": "the hero animation",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "svgo": "svgo --pretty -i docs/images/rawgenius_2024_4.svg -o docs/images/rawgenius_2024_4.min.svg",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

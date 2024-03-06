@@ -31,18 +31,721 @@ Lambda.has = function(it,elt) {
 	}
 	return false;
 };
-var Main = function() {
+var MainGo = function() {
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("Main - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-06 17:23:06" + " ");
+		$global.console.info("MainGo - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-06 17:23:07" + " ");
 		$global.console.info(GoSVG.version());
 	});
 };
-Main.__name__ = true;
-Main.main = function() {
-	var app = new Main();
+MainGo.__name__ = true;
+MainGo.main = function() {
+	var app = new MainGo();
 };
-Main.prototype = {
-	__class__: Main
+MainGo.prototype = {
+	initMove: function() {
+		var _gthis = this;
+		var randomY = Math.random() * 200 - 10;
+		var element = window.document.getElementById("rect-2");
+		var _obj;
+		if(element == null) {
+			$global.console.warn("Make sure you have an element selected: this is NO element");
+			_obj = null;
+		} else {
+			var svg = element;
+			var _id = "";
+			var _x = 0;
+			var _y = 0;
+			var _cx = 0;
+			var _cy = 0;
+			var _width = 0;
+			var _height = 0;
+			var tagName = element.tagName;
+			_id = tagName;
+			switch(tagName) {
+			case "circle":
+				var circle = js_Boot.__cast(svg , SVGCircleElement);
+				_x = circle.cx.baseVal.value - circle.r.baseVal.value / 2;
+				_y = circle.cy.baseVal.value - circle.r.baseVal.value / 2;
+				_width = circle.r.baseVal.value;
+				_height = circle.r.baseVal.value;
+				_cx = circle.cx.baseVal.value;
+				_cy = circle.cy.baseVal.value;
+				break;
+			case "ellipse":
+				var ellipse = js_Boot.__cast(svg , SVGEllipseElement);
+				_x = ellipse.cx.baseVal.value - ellipse.rx.baseVal.value / 2;
+				_y = ellipse.cy.baseVal.value - ellipse.ry.baseVal.value / 2;
+				_width = ellipse.rx.baseVal.value;
+				_height = ellipse.ry.baseVal.value;
+				_cx = ellipse.cx.baseVal.value;
+				_cy = ellipse.cy.baseVal.value;
+				break;
+			case "line":
+				var circle = js_Boot.__cast(svg , SVGLineElement);
+				_x = Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_y = Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_width = Math.max(circle.x1.baseVal.value,circle.x2.baseVal.value) - Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_height = Math.max(circle.y1.baseVal.value,circle.y2.baseVal.value) - Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			case "rect":
+				var rect = js_Boot.__cast(svg , SVGRectElement);
+				_x = rect.x.baseVal.value;
+				_y = rect.y.baseVal.value;
+				_width = rect.width.baseVal.value;
+				_height = rect.height.baseVal.value;
+				_cx = rect.x.baseVal.value + rect.width.baseVal.value / 2;
+				_cy = rect.y.baseVal.value + rect.height.baseVal.value / 2;
+				break;
+			case "text":
+				var text = js_Boot.__cast(svg , SVGTextElement);
+				_x = text.getBBox().x;
+				_y = text.getBBox().y;
+				_width = text.getBBox().width;
+				_height = text.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			default:
+				var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
+				console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+				_x = graphic.getBBox().x;
+				_y = graphic.getBBox().y;
+				_width = graphic.getBBox().width;
+				_height = graphic.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+			}
+			if(element.hasAttribute("viewBox")) {
+				var svgViewBox = element.getAttribute("viewBox");
+				var svgRect = element.viewBox.baseVal;
+				_width = svgRect.width;
+				_height = svgRect.height;
+				_x = svgRect.x;
+				_y = svgRect.y;
+			}
+			_obj = { _id : _id, el : element, x : _x, y : _y, width : _width, height : _height, centerX : _cx, centerY : _cy};
+		}
+		var _go = new GoSVG(_obj.el,5);
+		_go._isFrom = false;
+		var _this = _go;
+		var objValue = 0.0;
+		if(_this._target.hasAttribute("transform-x")) {
+			objValue = parseFloat(_this._target.getAttribute("transform-x"));
+		}
+		var _range = { key : "transform-x", from : _this._isFrom ? randomY : objValue, to : !_this._isFrom ? randomY : objValue};
+		_this._props.h["transform-x"] = _range;
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		if(_this._transform.translate == null) {
+			_this._transform.translate = { x : 0};
+		}
+		_this._transform.translate.x = randomY;
+		var _this1 = _this;
+		_this1._options.onComplete = function() {
+			console.log("src/MainGo.hx:37:","onComplete Rect");
+			_gthis.initMove();
+		};
+		_this1._options.onCompleteParams = null;
+	}
+	,initRotationTest: function() {
+		$global.console.info("onComplete");
+		var randomOpacity = Math.random();
+		var randomRotation = Math.random() * 360;
+		var element = window.document.getElementById("line-2");
+		var _obj;
+		if(element == null) {
+			$global.console.warn("Make sure you have an element selected: this is NO element");
+			_obj = null;
+		} else {
+			var svg = element;
+			var _id = "";
+			var _x = 0;
+			var _y = 0;
+			var _cx = 0;
+			var _cy = 0;
+			var _width = 0;
+			var _height = 0;
+			var tagName = element.tagName;
+			_id = tagName;
+			switch(tagName) {
+			case "circle":
+				var circle = js_Boot.__cast(svg , SVGCircleElement);
+				_x = circle.cx.baseVal.value - circle.r.baseVal.value / 2;
+				_y = circle.cy.baseVal.value - circle.r.baseVal.value / 2;
+				_width = circle.r.baseVal.value;
+				_height = circle.r.baseVal.value;
+				_cx = circle.cx.baseVal.value;
+				_cy = circle.cy.baseVal.value;
+				break;
+			case "ellipse":
+				var ellipse = js_Boot.__cast(svg , SVGEllipseElement);
+				_x = ellipse.cx.baseVal.value - ellipse.rx.baseVal.value / 2;
+				_y = ellipse.cy.baseVal.value - ellipse.ry.baseVal.value / 2;
+				_width = ellipse.rx.baseVal.value;
+				_height = ellipse.ry.baseVal.value;
+				_cx = ellipse.cx.baseVal.value;
+				_cy = ellipse.cy.baseVal.value;
+				break;
+			case "line":
+				var circle = js_Boot.__cast(svg , SVGLineElement);
+				_x = Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_y = Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_width = Math.max(circle.x1.baseVal.value,circle.x2.baseVal.value) - Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_height = Math.max(circle.y1.baseVal.value,circle.y2.baseVal.value) - Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			case "rect":
+				var rect = js_Boot.__cast(svg , SVGRectElement);
+				_x = rect.x.baseVal.value;
+				_y = rect.y.baseVal.value;
+				_width = rect.width.baseVal.value;
+				_height = rect.height.baseVal.value;
+				_cx = rect.x.baseVal.value + rect.width.baseVal.value / 2;
+				_cy = rect.y.baseVal.value + rect.height.baseVal.value / 2;
+				break;
+			case "text":
+				var text = js_Boot.__cast(svg , SVGTextElement);
+				_x = text.getBBox().x;
+				_y = text.getBBox().y;
+				_width = text.getBBox().width;
+				_height = text.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			default:
+				var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
+				console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+				_x = graphic.getBBox().x;
+				_y = graphic.getBBox().y;
+				_width = graphic.getBBox().width;
+				_height = graphic.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+			}
+			if(element.hasAttribute("viewBox")) {
+				var svgViewBox = element.getAttribute("viewBox");
+				var svgRect = element.viewBox.baseVal;
+				_width = svgRect.width;
+				_height = svgRect.height;
+				_x = svgRect.x;
+				_y = svgRect.y;
+			}
+			_obj = { _id : _id, el : element, x : _x, y : _y, width : _width, height : _height, centerX : _cx, centerY : _cy};
+		}
+		var _go = new GoSVG(_obj.el,5);
+		_go._isFrom = false;
+		var _this = _go;
+		var x = _obj.centerX;
+		var y = _obj.centerY;
+		var objValue = 0.0;
+		if(_this._target.hasAttribute("rotation")) {
+			objValue = parseFloat(_this._target.getAttribute("rotation"));
+		}
+		var _range = { key : "rotation", from : _this._isFrom ? 100 : objValue, to : !_this._isFrom ? 100 : objValue};
+		_this._props.h["rotation"] = _range;
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		if(_this._transform.rotate == null) {
+			_this._transform.rotate = { degree : 0};
+		}
+		_this._transform.rotate.degree = 100;
+		if(x != null) {
+			_this._transform.rotate.x = x;
+		}
+		if(y != null) {
+			_this._transform.rotate.y = y;
+		}
+		var _this1 = _this;
+		_this1._delay = _this1.getDuration(4);
+		var _this = _this1;
+		_this._options.onComplete = function() {
+			console.log("src/MainGo.hx:86:","onComplete");
+		};
+		_this._options.onCompleteParams = null;
+		var element = window.document.getElementById("text-3");
+		var _obj;
+		if(element == null) {
+			$global.console.warn("Make sure you have an element selected: this is NO element");
+			_obj = null;
+		} else {
+			var svg = element;
+			var _id = "";
+			var _x = 0;
+			var _y = 0;
+			var _cx = 0;
+			var _cy = 0;
+			var _width = 0;
+			var _height = 0;
+			var tagName = element.tagName;
+			_id = tagName;
+			switch(tagName) {
+			case "circle":
+				var circle = js_Boot.__cast(svg , SVGCircleElement);
+				_x = circle.cx.baseVal.value - circle.r.baseVal.value / 2;
+				_y = circle.cy.baseVal.value - circle.r.baseVal.value / 2;
+				_width = circle.r.baseVal.value;
+				_height = circle.r.baseVal.value;
+				_cx = circle.cx.baseVal.value;
+				_cy = circle.cy.baseVal.value;
+				break;
+			case "ellipse":
+				var ellipse = js_Boot.__cast(svg , SVGEllipseElement);
+				_x = ellipse.cx.baseVal.value - ellipse.rx.baseVal.value / 2;
+				_y = ellipse.cy.baseVal.value - ellipse.ry.baseVal.value / 2;
+				_width = ellipse.rx.baseVal.value;
+				_height = ellipse.ry.baseVal.value;
+				_cx = ellipse.cx.baseVal.value;
+				_cy = ellipse.cy.baseVal.value;
+				break;
+			case "line":
+				var circle = js_Boot.__cast(svg , SVGLineElement);
+				_x = Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_y = Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_width = Math.max(circle.x1.baseVal.value,circle.x2.baseVal.value) - Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_height = Math.max(circle.y1.baseVal.value,circle.y2.baseVal.value) - Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			case "rect":
+				var rect = js_Boot.__cast(svg , SVGRectElement);
+				_x = rect.x.baseVal.value;
+				_y = rect.y.baseVal.value;
+				_width = rect.width.baseVal.value;
+				_height = rect.height.baseVal.value;
+				_cx = rect.x.baseVal.value + rect.width.baseVal.value / 2;
+				_cy = rect.y.baseVal.value + rect.height.baseVal.value / 2;
+				break;
+			case "text":
+				var text = js_Boot.__cast(svg , SVGTextElement);
+				_x = text.getBBox().x;
+				_y = text.getBBox().y;
+				_width = text.getBBox().width;
+				_height = text.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			default:
+				var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
+				console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+				_x = graphic.getBBox().x;
+				_y = graphic.getBBox().y;
+				_width = graphic.getBBox().width;
+				_height = graphic.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+			}
+			if(element.hasAttribute("viewBox")) {
+				var svgViewBox = element.getAttribute("viewBox");
+				var svgRect = element.viewBox.baseVal;
+				_width = svgRect.width;
+				_height = svgRect.height;
+				_x = svgRect.x;
+				_y = svgRect.y;
+			}
+			_obj = { _id : _id, el : element, x : _x, y : _y, width : _width, height : _height, centerX : _cx, centerY : _cy};
+		}
+		var _go = new GoSVG(_obj.el,5);
+		_go._isFrom = false;
+		var _this = _go;
+		var x = _obj.centerX;
+		var y = _obj.centerY;
+		var objValue = 0.0;
+		if(_this._target.hasAttribute("rotation")) {
+			objValue = parseFloat(_this._target.getAttribute("rotation"));
+		}
+		var _range = { key : "rotation", from : _this._isFrom ? 180 : objValue, to : !_this._isFrom ? 180 : objValue};
+		_this._props.h["rotation"] = _range;
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		if(_this._transform.rotate == null) {
+			_this._transform.rotate = { degree : 0};
+		}
+		_this._transform.rotate.degree = 180;
+		if(x != null) {
+			_this._transform.rotate.x = x;
+		}
+		if(y != null) {
+			_this._transform.rotate.y = y;
+		}
+		var _this1 = _this;
+		_this1._options.onComplete = function() {
+			console.log("src/MainGo.hx:92:","onComplete");
+		};
+		_this1._options.onCompleteParams = null;
+		var element = window.document.getElementById("polygon-2");
+		var _obj;
+		if(element == null) {
+			$global.console.warn("Make sure you have an element selected: this is NO element");
+			_obj = null;
+		} else {
+			var svg = element;
+			var _id = "";
+			var _x = 0;
+			var _y = 0;
+			var _cx = 0;
+			var _cy = 0;
+			var _width = 0;
+			var _height = 0;
+			var tagName = element.tagName;
+			_id = tagName;
+			switch(tagName) {
+			case "circle":
+				var circle = js_Boot.__cast(svg , SVGCircleElement);
+				_x = circle.cx.baseVal.value - circle.r.baseVal.value / 2;
+				_y = circle.cy.baseVal.value - circle.r.baseVal.value / 2;
+				_width = circle.r.baseVal.value;
+				_height = circle.r.baseVal.value;
+				_cx = circle.cx.baseVal.value;
+				_cy = circle.cy.baseVal.value;
+				break;
+			case "ellipse":
+				var ellipse = js_Boot.__cast(svg , SVGEllipseElement);
+				_x = ellipse.cx.baseVal.value - ellipse.rx.baseVal.value / 2;
+				_y = ellipse.cy.baseVal.value - ellipse.ry.baseVal.value / 2;
+				_width = ellipse.rx.baseVal.value;
+				_height = ellipse.ry.baseVal.value;
+				_cx = ellipse.cx.baseVal.value;
+				_cy = ellipse.cy.baseVal.value;
+				break;
+			case "line":
+				var circle = js_Boot.__cast(svg , SVGLineElement);
+				_x = Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_y = Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_width = Math.max(circle.x1.baseVal.value,circle.x2.baseVal.value) - Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_height = Math.max(circle.y1.baseVal.value,circle.y2.baseVal.value) - Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			case "rect":
+				var rect = js_Boot.__cast(svg , SVGRectElement);
+				_x = rect.x.baseVal.value;
+				_y = rect.y.baseVal.value;
+				_width = rect.width.baseVal.value;
+				_height = rect.height.baseVal.value;
+				_cx = rect.x.baseVal.value + rect.width.baseVal.value / 2;
+				_cy = rect.y.baseVal.value + rect.height.baseVal.value / 2;
+				break;
+			case "text":
+				var text = js_Boot.__cast(svg , SVGTextElement);
+				_x = text.getBBox().x;
+				_y = text.getBBox().y;
+				_width = text.getBBox().width;
+				_height = text.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			default:
+				var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
+				console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+				_x = graphic.getBBox().x;
+				_y = graphic.getBBox().y;
+				_width = graphic.getBBox().width;
+				_height = graphic.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+			}
+			if(element.hasAttribute("viewBox")) {
+				var svgViewBox = element.getAttribute("viewBox");
+				var svgRect = element.viewBox.baseVal;
+				_width = svgRect.width;
+				_height = svgRect.height;
+				_x = svgRect.x;
+				_y = svgRect.y;
+			}
+			_obj = { _id : _id, el : element, x : _x, y : _y, width : _width, height : _height, centerX : _cx, centerY : _cy};
+		}
+		var _go = new GoSVG(_obj.el,5);
+		_go._isFrom = false;
+		var _this = _go;
+		var x = _obj.centerX;
+		var y = _obj.centerY;
+		var objValue = 0.0;
+		if(_this._target.hasAttribute("rotation")) {
+			objValue = parseFloat(_this._target.getAttribute("rotation"));
+		}
+		var _range = { key : "rotation", from : _this._isFrom ? 180 : objValue, to : !_this._isFrom ? 180 : objValue};
+		_this._props.h["rotation"] = _range;
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		if(_this._transform.rotate == null) {
+			_this._transform.rotate = { degree : 0};
+		}
+		_this._transform.rotate.degree = 180;
+		if(x != null) {
+			_this._transform.rotate.x = x;
+		}
+		if(y != null) {
+			_this._transform.rotate.y = y;
+		}
+		var _this1 = _this;
+		_this1._options.onComplete = function() {
+			console.log("src/MainGo.hx:97:","onComplete");
+		};
+		_this1._options.onCompleteParams = null;
+		var element = window.document.getElementById("polyline-2");
+		var _obj;
+		if(element == null) {
+			$global.console.warn("Make sure you have an element selected: this is NO element");
+			_obj = null;
+		} else {
+			var svg = element;
+			var _id = "";
+			var _x = 0;
+			var _y = 0;
+			var _cx = 0;
+			var _cy = 0;
+			var _width = 0;
+			var _height = 0;
+			var tagName = element.tagName;
+			_id = tagName;
+			switch(tagName) {
+			case "circle":
+				var circle = js_Boot.__cast(svg , SVGCircleElement);
+				_x = circle.cx.baseVal.value - circle.r.baseVal.value / 2;
+				_y = circle.cy.baseVal.value - circle.r.baseVal.value / 2;
+				_width = circle.r.baseVal.value;
+				_height = circle.r.baseVal.value;
+				_cx = circle.cx.baseVal.value;
+				_cy = circle.cy.baseVal.value;
+				break;
+			case "ellipse":
+				var ellipse = js_Boot.__cast(svg , SVGEllipseElement);
+				_x = ellipse.cx.baseVal.value - ellipse.rx.baseVal.value / 2;
+				_y = ellipse.cy.baseVal.value - ellipse.ry.baseVal.value / 2;
+				_width = ellipse.rx.baseVal.value;
+				_height = ellipse.ry.baseVal.value;
+				_cx = ellipse.cx.baseVal.value;
+				_cy = ellipse.cy.baseVal.value;
+				break;
+			case "line":
+				var circle = js_Boot.__cast(svg , SVGLineElement);
+				_x = Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_y = Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_width = Math.max(circle.x1.baseVal.value,circle.x2.baseVal.value) - Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_height = Math.max(circle.y1.baseVal.value,circle.y2.baseVal.value) - Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			case "rect":
+				var rect = js_Boot.__cast(svg , SVGRectElement);
+				_x = rect.x.baseVal.value;
+				_y = rect.y.baseVal.value;
+				_width = rect.width.baseVal.value;
+				_height = rect.height.baseVal.value;
+				_cx = rect.x.baseVal.value + rect.width.baseVal.value / 2;
+				_cy = rect.y.baseVal.value + rect.height.baseVal.value / 2;
+				break;
+			case "text":
+				var text = js_Boot.__cast(svg , SVGTextElement);
+				_x = text.getBBox().x;
+				_y = text.getBBox().y;
+				_width = text.getBBox().width;
+				_height = text.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			default:
+				var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
+				console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+				_x = graphic.getBBox().x;
+				_y = graphic.getBBox().y;
+				_width = graphic.getBBox().width;
+				_height = graphic.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+			}
+			if(element.hasAttribute("viewBox")) {
+				var svgViewBox = element.getAttribute("viewBox");
+				var svgRect = element.viewBox.baseVal;
+				_width = svgRect.width;
+				_height = svgRect.height;
+				_x = svgRect.x;
+				_y = svgRect.y;
+			}
+			_obj = { _id : _id, el : element, x : _x, y : _y, width : _width, height : _height, centerX : _cx, centerY : _cy};
+		}
+		var _go = new GoSVG(_obj.el,5);
+		_go._isFrom = false;
+		var _this = _go;
+		var x = _obj.centerX;
+		var y = _obj.centerY;
+		var objValue = 0.0;
+		if(_this._target.hasAttribute("rotation")) {
+			objValue = parseFloat(_this._target.getAttribute("rotation"));
+		}
+		var _range = { key : "rotation", from : _this._isFrom ? 180 : objValue, to : !_this._isFrom ? 180 : objValue};
+		_this._props.h["rotation"] = _range;
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		if(_this._transform.rotate == null) {
+			_this._transform.rotate = { degree : 0};
+		}
+		_this._transform.rotate.degree = 180;
+		if(x != null) {
+			_this._transform.rotate.x = x;
+		}
+		if(y != null) {
+			_this._transform.rotate.y = y;
+		}
+		var _this1 = _this;
+		_this1._options.onComplete = function() {
+			console.log("src/MainGo.hx:102:","onComplete");
+		};
+		_this1._options.onCompleteParams = null;
+		var element = window.document.getElementById("path-2");
+		var _obj;
+		if(element == null) {
+			$global.console.warn("Make sure you have an element selected: this is NO element");
+			_obj = null;
+		} else {
+			var svg = element;
+			var _id = "";
+			var _x = 0;
+			var _y = 0;
+			var _cx = 0;
+			var _cy = 0;
+			var _width = 0;
+			var _height = 0;
+			var tagName = element.tagName;
+			_id = tagName;
+			switch(tagName) {
+			case "circle":
+				var circle = js_Boot.__cast(svg , SVGCircleElement);
+				_x = circle.cx.baseVal.value - circle.r.baseVal.value / 2;
+				_y = circle.cy.baseVal.value - circle.r.baseVal.value / 2;
+				_width = circle.r.baseVal.value;
+				_height = circle.r.baseVal.value;
+				_cx = circle.cx.baseVal.value;
+				_cy = circle.cy.baseVal.value;
+				break;
+			case "ellipse":
+				var ellipse = js_Boot.__cast(svg , SVGEllipseElement);
+				_x = ellipse.cx.baseVal.value - ellipse.rx.baseVal.value / 2;
+				_y = ellipse.cy.baseVal.value - ellipse.ry.baseVal.value / 2;
+				_width = ellipse.rx.baseVal.value;
+				_height = ellipse.ry.baseVal.value;
+				_cx = ellipse.cx.baseVal.value;
+				_cy = ellipse.cy.baseVal.value;
+				break;
+			case "line":
+				var circle = js_Boot.__cast(svg , SVGLineElement);
+				_x = Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_y = Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_width = Math.max(circle.x1.baseVal.value,circle.x2.baseVal.value) - Math.min(circle.x1.baseVal.value,circle.x2.baseVal.value);
+				_height = Math.max(circle.y1.baseVal.value,circle.y2.baseVal.value) - Math.min(circle.y1.baseVal.value,circle.y2.baseVal.value);
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			case "rect":
+				var rect = js_Boot.__cast(svg , SVGRectElement);
+				_x = rect.x.baseVal.value;
+				_y = rect.y.baseVal.value;
+				_width = rect.width.baseVal.value;
+				_height = rect.height.baseVal.value;
+				_cx = rect.x.baseVal.value + rect.width.baseVal.value / 2;
+				_cy = rect.y.baseVal.value + rect.height.baseVal.value / 2;
+				break;
+			case "text":
+				var text = js_Boot.__cast(svg , SVGTextElement);
+				_x = text.getBBox().x;
+				_y = text.getBBox().y;
+				_width = text.getBBox().width;
+				_height = text.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+				break;
+			default:
+				var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
+				console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+				_x = graphic.getBBox().x;
+				_y = graphic.getBBox().y;
+				_width = graphic.getBBox().width;
+				_height = graphic.getBBox().height;
+				_cx = _x + _width / 2;
+				_cy = _y + _height / 2;
+			}
+			if(element.hasAttribute("viewBox")) {
+				var svgViewBox = element.getAttribute("viewBox");
+				var svgRect = element.viewBox.baseVal;
+				_width = svgRect.width;
+				_height = svgRect.height;
+				_x = svgRect.x;
+				_y = svgRect.y;
+			}
+			_obj = { _id : _id, el : element, x : _x, y : _y, width : _width, height : _height, centerX : _cx, centerY : _cy};
+		}
+		var _go = new GoSVG(_obj.el,5);
+		_go._isFrom = false;
+		var _this = _go;
+		var x = _obj.centerX;
+		var y = _obj.centerY;
+		var objValue = 0.0;
+		if(_this._target.hasAttribute("rotation")) {
+			objValue = parseFloat(_this._target.getAttribute("rotation"));
+		}
+		var _range = { key : "rotation", from : _this._isFrom ? 180 : objValue, to : !_this._isFrom ? 180 : objValue};
+		_this._props.h["rotation"] = _range;
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		if(_this._transform.rotate == null) {
+			_this._transform.rotate = { degree : 0};
+		}
+		_this._transform.rotate.degree = 180;
+		if(x != null) {
+			_this._transform.rotate.x = x;
+		}
+		if(y != null) {
+			_this._transform.rotate.y = y;
+		}
+		var _this1 = _this;
+		_this1._options.onComplete = function() {
+			console.log("src/MainGo.hx:107:","onComplete");
+		};
+		_this1._options.onCompleteParams = null;
+	}
+	,init2OnUpdateHandler: function(time) {
+		var text = window.document.getElementById("text-2");
+		text.innerHTML = "time: " + time;
+	}
+	,init1: function() {
+		var svgs = window.document.getElementsByTagName("svg");
+		console.log("src/MainGo.hx:118:",svgs.length);
+		var svg = window.document.getElementsByTagName("svg")[0];
+		var children = svg.children;
+		var _g = 0;
+		while(_g < children.length) {
+			var i = children[_g];
+			++_g;
+			var child = i;
+		}
+		var svgViewBox = svg.getAttribute("viewBox");
+		console.log("src/MainGo.hx:128:","" + svgViewBox);
+		var svgRect = svg.viewBox.baseVal;
+		console.log("src/MainGo.hx:131:",svgRect);
+		GoSVG.to(window.document.getElementById("line-1"), 5).x(500).y(100);
+		var _svgPolyLine = window.document.getElementById("polyline-1");
+		_svgPolyLine.setAttribute("transform","translate(333)");
+		GoSVG.to(window.document.getElementById("polygon-1"),5).pos(300,300);
+		GoSVG.to(window.document.getElementById("group-plus"),5).pos(Math.random() * svgRect.width,Math.random() * svgRect.height);
+	}
+	,init0: function() {
+		var svgCircle = window.document.getElementById("circle-1");
+		svgCircle.setAttributeNS(null,"cx","111");
+		svgCircle.setAttribute("cy","111");
+		GoSVG.to(svgCircle, 5).x(500).y(100);
+		var svgRect = window.document.getElementById("rect-1");
+		GoSVG.to(svgRect, 10).x(500).y(555);
+	}
+	,__class__: MainGo
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -1145,5 +1848,5 @@ GoSVG.VERSION = "2.0.1";
 GoSVG._tweens = [];
 GoSVG._counter = 0;
 model_constants_App.NAME = "[RawGenius2024]";
-Main.main();
+MainGo.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

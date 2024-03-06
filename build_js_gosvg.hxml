@@ -1,7 +1,7 @@
 --library cc-go
 -cp src
--main Main
--js docs/cc-go-example.js
+-main MainGoSVG
+-js docs/cc-go-svg.js
 # -D source-map-content
 # -debug
 

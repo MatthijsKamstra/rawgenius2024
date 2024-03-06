@@ -3,7 +3,7 @@ package model.constants;
 import haxe.macro.Context;
 
 class App {
-	public static var NAME:String = "[let.GoSVG]";
+	public static var NAME:String = "[RawGenius2024]";
 
 	inline public static macro function getBuildDate() {
 		#if !display

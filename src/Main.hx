@@ -1,6 +1,7 @@
 package;
 
-import cc.lets.extern.GoSVG;
+import cc.lets.GoSVG;
+import cc.lets.GoSVG;
 import js.Browser.*;
 import js.Syntax;
 import js.html.svg.Element;
@@ -16,7 +17,11 @@ class Main {
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			console.info('${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
+
+			console.info(GoSVG.version());
+
 			// init0();
+
 			// init1();
 			// initRotationTest();
 			// initMove();

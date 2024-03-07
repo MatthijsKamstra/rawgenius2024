@@ -1,3 +1,3 @@
--cmd haxe build_js.hxml
 -cmd haxe build_js_go.hxml
--cmd haxe build_js_gosvg.hxml
+-cmd haxe build_js_go_svg.hxml
+-cmd haxe build_js_go_el.hxml

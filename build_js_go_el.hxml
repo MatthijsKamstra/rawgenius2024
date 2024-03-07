@@ -1,7 +1,7 @@
 --library cc-go
 -cp src
 -main MainGoEl
--js docs/cc-go-test.js
+-js docs/cc-go-el.js
 # -D source-map-content
 # -debug
 

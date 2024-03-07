@@ -16,9 +16,8 @@ import model.constants.App;
 class MainGoSVG {
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
-			console.info('MainGoSVG - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
-
-			console.info(GoSVG.version());
+			// console.info('MainGoSVG - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
+			// console.info(GoSVG.version());
 
 			// init0();
 

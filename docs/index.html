@@ -19,6 +19,8 @@
 
 		.spacer {
 			height: 50px;
+			border: 1px solid pink;
+			background-color: white;
 		}
 
 		#container-hero-html {
@@ -28,7 +30,7 @@
 			background-image: url("images/rawgenius_2024_4.png"), linear-gradient(0deg, rgba(27, 24, 31, 1) 0%, rgba(50, 4, 89, 1) 85%);
 			background-position: center center;
 			background-repeat: no-repeat;
-			background-size: contain;
+			background-size: cover;
 		}
 
 		#container-hero-html {
@@ -45,8 +47,8 @@
 
 		#planet {
 			position: absolute;
-			left: 329px;
-			top: 139px;
+			left: 50%;
+			top: 15%;
 			width: 29vw;
 
 			img {
@@ -56,8 +58,8 @@
 
 		#saturnring {
 			position: absolute;
-			left: 278px;
-			top: 167px;
+			left: 42%;
+			top: 24%;
 			width: 44vw;
 
 			img {
@@ -67,8 +69,8 @@
 
 		#astronaut {
 			position: absolute;
-			left: 173px;
-			top: 178px;
+			left: 26%;
+			top: 28%;
 			width: 23vw;
 
 			img {
@@ -78,8 +80,8 @@
 
 		#rocket {
 			position: absolute;
-			left: 63px;
-			top: 78px;
+			left: 9%;
+			top: -3%;
 			width: 18vw;
 
 			img {
@@ -98,6 +100,7 @@
 			<div id="astronaut"><img src="images/astronaut.png"></div>
 			<div id="rocket"><img src="images/rocket.png"></div>
 		</div>
+
 		<div class="spacer"></div>
 
 		<div id="container-hero-svg" class="hero">
@@ -106,7 +109,7 @@
 
 	</main>
 
-	<script src="cc-go-example.js"></script>
+	<script src="cc-go-el.js"></script>
 	<script src="cc-go-svg.js"></script>
 	<script src="cc-go.js"></script>
 

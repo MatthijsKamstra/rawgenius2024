@@ -33,8 +33,6 @@ Lambda.has = function(it,elt) {
 };
 var MainGoSVG = function() {
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGoSVG - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-06 17:23:07" + " ");
-		$global.console.info(GoSVG.version());
 	});
 };
 MainGoSVG.__name__ = true;
@@ -145,7 +143,7 @@ MainGoSVG.prototype = {
 		_this._transform.translate.x = randomY;
 		var _this1 = _this;
 		_this1._options.onComplete = function() {
-			console.log("src/MainGoSVG.hx:37:","onComplete Rect");
+			console.log("src/MainGoSVG.hx:36:","onComplete Rect");
 			_gthis.initMove();
 		};
 		_this1._options.onCompleteParams = null;
@@ -264,7 +262,7 @@ MainGoSVG.prototype = {
 		_this1._delay = _this1.getDuration(4);
 		var _this = _this1;
 		_this._options.onComplete = function() {
-			console.log("src/MainGoSVG.hx:86:","onComplete");
+			console.log("src/MainGoSVG.hx:85:","onComplete");
 		};
 		_this._options.onCompleteParams = null;
 		var element = window.document.getElementById("text-3");
@@ -375,7 +373,7 @@ MainGoSVG.prototype = {
 		}
 		var _this1 = _this;
 		_this1._options.onComplete = function() {
-			console.log("src/MainGoSVG.hx:92:","onComplete");
+			console.log("src/MainGoSVG.hx:91:","onComplete");
 		};
 		_this1._options.onCompleteParams = null;
 		var element = window.document.getElementById("polygon-2");
@@ -486,7 +484,7 @@ MainGoSVG.prototype = {
 		}
 		var _this1 = _this;
 		_this1._options.onComplete = function() {
-			console.log("src/MainGoSVG.hx:97:","onComplete");
+			console.log("src/MainGoSVG.hx:96:","onComplete");
 		};
 		_this1._options.onCompleteParams = null;
 		var element = window.document.getElementById("polyline-2");
@@ -597,7 +595,7 @@ MainGoSVG.prototype = {
 		}
 		var _this1 = _this;
 		_this1._options.onComplete = function() {
-			console.log("src/MainGoSVG.hx:102:","onComplete");
+			console.log("src/MainGoSVG.hx:101:","onComplete");
 		};
 		_this1._options.onCompleteParams = null;
 		var element = window.document.getElementById("path-2");
@@ -708,7 +706,7 @@ MainGoSVG.prototype = {
 		}
 		var _this1 = _this;
 		_this1._options.onComplete = function() {
-			console.log("src/MainGoSVG.hx:107:","onComplete");
+			console.log("src/MainGoSVG.hx:106:","onComplete");
 		};
 		_this1._options.onCompleteParams = null;
 	}
@@ -718,7 +716,7 @@ MainGoSVG.prototype = {
 	}
 	,init1: function() {
 		var svgs = window.document.getElementsByTagName("svg");
-		console.log("src/MainGoSVG.hx:118:",svgs.length);
+		console.log("src/MainGoSVG.hx:117:",svgs.length);
 		var svg = window.document.getElementsByTagName("svg")[0];
 		var children = svg.children;
 		var _g = 0;
@@ -728,9 +726,9 @@ MainGoSVG.prototype = {
 			var child = i;
 		}
 		var svgViewBox = svg.getAttribute("viewBox");
-		console.log("src/MainGoSVG.hx:128:","" + svgViewBox);
+		console.log("src/MainGoSVG.hx:127:","" + svgViewBox);
 		var svgRect = svg.viewBox.baseVal;
-		console.log("src/MainGoSVG.hx:131:",svgRect);
+		console.log("src/MainGoSVG.hx:130:",svgRect);
 		GoSVG.to(window.document.getElementById("line-1"), 5).x(500).y(100);
 		var _svgPolyLine = window.document.getElementById("polyline-1");
 		_svgPolyLine.setAttribute("transform","translate(333)");

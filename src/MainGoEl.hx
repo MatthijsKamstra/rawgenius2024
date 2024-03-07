@@ -37,7 +37,7 @@ class MainGoEl {
 	function initRocket() {
 		var el:DivElement = cast document.getElementById('rocket');
 		var obj:FooObj = this.elementMap.get('rocket');
-		GoEl.to(el, 10).x(100).onComplete(foobar);
+		GoEl.to(el, 10).x(100).y(100).onComplete(foobar);
 		// Go.orbit(_el, obj.)
 	}
 

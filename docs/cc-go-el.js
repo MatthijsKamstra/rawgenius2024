@@ -30,7 +30,7 @@ var MainGoEl = function() {
 	this.elementMap = new haxe_ds_StringMap();
 	var _gthis = this;
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGo - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-07 15:14:08" + " ");
+		$global.console.info("MainGo - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-07 16:23:46" + " ");
 		$global.console.info(cc_lets_GoEl.version());
 		_gthis.setupListeners();
 		_gthis.setContainer();
@@ -60,8 +60,19 @@ MainGoEl.prototype = {
 			_this.updateProperties(0);
 		}
 		var _this1 = _this;
-		_this1._options.onComplete = $bind(this,this.foobar);
-		_this1._options.onCompleteParams = null;
+		var objValue = 0;
+		if(Object.prototype.hasOwnProperty.call(_this1._el,"y")) {
+			objValue = Reflect.getProperty(_this1._el,"y");
+		}
+		_this1._el.setAttribute("original_" + "y","" + 100);
+		var _range = { key : "y", from : _this1._isFrom ? 100 : objValue, to : !_this1._isFrom ? 100 : objValue};
+		_this1._props.h["y"] = _range;
+		if(_this1._isFrom) {
+			_this1.updateProperties(0);
+		}
+		var _this = _this1;
+		_this._options.onComplete = $bind(this,this.foobar);
+		_this._options.onCompleteParams = null;
 	}
 	,foobar: function() {
 		$global.console.log("x");
@@ -665,7 +676,7 @@ cc_lets_GoEl.prototype = {
 	}
 	,init: function() {
 		if(this._isTimeBased) {
-			console.log("cc/lets/GoEl.hx:525:","TODO: build timebased animation");
+			console.log("cc/lets/GoEl.hx:526:","TODO: build timebased animation");
 		} else if(cc_lets_GoEl._requestId == null) {
 			cc_lets_GoEl._requestId = window.requestAnimationFrame($bind(this,this.onEnterFrameHandler));
 		}
@@ -690,7 +701,7 @@ cc_lets_GoEl.prototype = {
 	}
 	,update: function() {
 		if(this._delay > 0 && this._isTimeBased) {
-			console.log("cc/lets/GoEl.hx:564:","FIXME this doesn't work yet");
+			console.log("cc/lets/GoEl.hx:565:","FIXME this doesn't work yet");
 		}
 		if(this._delay > 0) {
 			this._delay--;
@@ -698,7 +709,7 @@ cc_lets_GoEl.prototype = {
 		}
 		if(!this._isDelayDone) {
 			if(this.DEBUG) {
-				console.log("cc/lets/GoEl.hx:571:","should trigger only once: " + this._id);
+				console.log("cc/lets/GoEl.hx:572:","should trigger only once: " + this._id);
 			}
 			if(Reflect.isFunction(this._options.onAnimationStart)) {
 				var func = this._options.onAnimationStart;
@@ -742,9 +753,9 @@ cc_lets_GoEl.prototype = {
 				var __angle = this._props.h["angle"];
 				var __speed = this._props.h["speed"];
 				var __rad = this._props.h["radius"];
-				console.log("cc/lets/GoEl.hx:629:","cx: " + __cx.to + ",  cy: " + __cy.to + " , " + __angle.to + ", " + __speed.to + ", " + __rad.to);
-				console.log("cc/lets/GoEl.hx:640:","" + n + " == \"angle\" : " + Std.string(n == "angle"));
-				console.log("cc/lets/GoEl.hx:642:",this._el);
+				console.log("cc/lets/GoEl.hx:630:","cx: " + __cx.to + ",  cy: " + __cy.to + " , " + __angle.to + ", " + __speed.to + ", " + __rad.to);
+				console.log("cc/lets/GoEl.hx:641:","" + n + " == \"angle\" : " + Std.string(n == "angle"));
+				console.log("cc/lets/GoEl.hx:643:",this._el);
 				if(n == "angle") {
 					var aa = __angle.to + __speed.to;
 					Reflect.setProperty(this._el,n,aa);
@@ -752,13 +763,26 @@ cc_lets_GoEl.prototype = {
 			} else {
 				var value = this._easing.ease(time,range.from,range.to - range.from,this._duration);
 				Reflect.setProperty(this._el,n,value);
-				this._el.setAttribute("" + n,"" + value);
+				this.setStyleFor(this._el,n,value);
 			}
+		}
+	}
+	,setStyleFor: function(_el,n,value) {
+		_el.setAttribute("" + n,"" + value);
+		switch(n) {
+		case "x":
+			_el.style.left = "" + value + "px";
+			break;
+		case "y":
+			_el.style.top = "" + value + "px";
+			break;
+		default:
+			console.log("cc/lets/GoEl.hx:674:","case '" + n + "': trace ('" + n + "');");
 		}
 	}
 	,complete: function() {
 		if(this.DEBUG) {
-			console.log("cc/lets/GoEl.hx:667:","complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoEl._tweens.length);
+			console.log("cc/lets/GoEl.hx:680:","complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoEl._tweens.length);
 		}
 		if(this._isYoyo) {
 			var h = this._props.h;

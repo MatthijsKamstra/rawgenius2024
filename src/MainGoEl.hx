@@ -1,10 +1,12 @@
 package;
 
 import cc.lets.GoEl;
+import haxe.Http;
 import haxe.Log;
 import js.Browser.*;
 import js.Syntax;
 import js.html.DivElement;
+import js.html.Image;
 import js.html.svg.Element;
 import js.html.svg.Rect;
 import js.html.svg.SVGElement;
@@ -19,12 +21,15 @@ class MainGoEl {
 	var h:Int;
 	var elementMap:Map<String, Dynamic> = new Map();
 
-	var idArr = ['container-hero-html', 'astronaut', 'rocket', 'saturnring', 'planet'];
+	var 	 = ['astronaut', 'rocket', 'saturnring', 'planet'];
+	var containerArr = ['container-hero-html', 'container-hero-svg', 'container-hero-svg2'];
 
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			console.info('MainGo - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
 			console.info(GoEl.version());
+
+			convertSrcToSVG();
 
 			setupListeners();
 			setContainer();
@@ -32,6 +37,41 @@ class MainGoEl {
 
 			initRocket();
 		});
+	}
+
+	function convertSrcToSVG() {
+		// Get the container element
+		var container:DivElement = cast document.getElementById("container-hero-svg2");
+		// Get the image element inside the container
+		var image:Image = cast container.querySelector("img");
+		// Get the src attribute of the image
+		// var src = image.getAttribute("src");
+		// Define the URL of the SVG file
+		// var url = "images/svg/fake.svg";
+		var url = image.src;
+		// Create a new Http instance
+		var http = new Http(url);
+		// Define a callback function to handle the response
+		http.onData = function(data:String) {
+			// use the svg into the element
+			container.innerHTML = data;
+
+			getDataSBG();
+		};
+		// Define a callback function to handle errors
+		http.onError = function(error:String) {
+			// Log an error message if the request failed
+			trace("Failed to load SVG: " + error);
+		};
+		// Send the request
+		http.request();
+	}
+
+	function getDataSBG() {
+		var container:DivElement = cast document.getElementById("container-hero-svg2");
+		var astronaut = container.querySelector("#astronaut");
+
+		console.log(astronaut);
 	}
 
 	function initRocket() {
@@ -46,7 +86,7 @@ class MainGoEl {
 	}
 
 	function collectDefault() {
-		for (i in 0...idArr.length) {
+		for (i in 0...	.length) {
 			var _idArr = idArr[i];
 			var _el:DivElement = cast document.getElementById(_idArr);
 			this.collectDefaultState(_el);

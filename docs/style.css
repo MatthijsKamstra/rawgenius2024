@@ -1,0 +1,88 @@
+.hero {
+  background-color: rgba(50, 4, 89, 1);
+  background-image: linear-gradient(
+    0deg,
+    rgba(27, 24, 31, 1) 0%,
+    rgba(50, 4, 89, 1) 85%
+  );
+  height: 50vh;
+}
+
+.spacer {
+  height: 50px;
+  border: 1px solid pink;
+  background-color: white;
+}
+
+#container-hero-html {
+  /* background-image: linear-gradient(0deg, rgba(27, 24, 31, 1) 0%, rgba(50, 4, 89, 1) 85%), url("images/rawgenius_2024_4.png"); */
+  /* background-image: linear-gradient(0deg, rgba(27, 24, 31, 1) 0%, rgba(50, 4, 89, 1) 85%), url('images/rawgenius_2024_4.png'); */
+  /* background-image: linear-gradient(0deg, rgba(27, 24, 31, 1) 0%, rgba(50, 4, 89, 1) 85%), url('images/bg.png'); */
+  background-image: url("images/rawgenius_2024_4.png"),
+    linear-gradient(0deg, rgba(27, 24, 31, 1) 0%, rgba(50, 4, 89, 1) 85%);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#container-hero-html {
+  position: relative;
+  overflow: hidden;
+  /* border: 1px solid pink; */
+}
+
+.container-svg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+#planet {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  width: 29vw;
+
+  img {
+    width: 100%;
+  }
+}
+
+#saturnring {
+  position: absolute;
+  left: 42%;
+  top: 24%;
+  width: 44vw;
+
+  img {
+    width: 100%;
+  }
+}
+
+#astronaut {
+  position: absolute;
+  left: 26%;
+  top: 28%;
+  width: 23vw;
+
+  img {
+    width: 100%;
+  }
+}
+
+#rocket {
+  position: absolute;
+  left: 9%;
+  top: -3%;
+  width: 18vw;
+
+  img {
+    width: 100%;
+  }
+}

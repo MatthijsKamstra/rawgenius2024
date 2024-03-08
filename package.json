@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "svgo": "svgo --pretty -i docs/images/svg/rawgenius_2024_4.svg -o docs/images/svg/rawgenius_2024_4.min.svg",
+    "svgo:hero": "svgo --pretty -i docs/images/svg/rawgenius_2024_4.svg -o docs/images/svg/rawgenius_2024_4.min.svg",
+    "svgo:fake": "svgo cleanupIDs:true emoveHiddenElems:false removeEmptyContainers:false --pretty -i docs/images/svg/fake.svg -o docs/images/svg/fake.min.svg",
     "imageoptim": "open -a ImageOptim docs/images/*.png",
     "imageoptim2": "/Applications/ImageOptim.app/Contents/MacOS/ImageOptim  docs/images/*.png",
     "test": "echo \"Error: no test specified\" && exit 1"

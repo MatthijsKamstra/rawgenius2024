@@ -1,9 +1,15 @@
 package;
 
+import cc.lets.Easing;
 import cc.lets.GoSVG;
-import cc.lets.GoSVG;
+import cc.lets.easing.Quad.QuadEaseInOut;
+import cc.lets.easing.Quad;
+import haxe.Http;
+import haxe.Log;
 import js.Browser.*;
 import js.Syntax;
+import js.html.DivElement;
+import js.html.Image;
 import js.html.svg.Element;
 import js.html.svg.Rect;
 import js.html.svg.SVGElement;
@@ -11,170 +17,110 @@ import model.constants.App;
 
 /**
  * @author Matthijs Kamstra aka [mck]
- * MIT
  */
 class MainGoSVG {
+	var w:Int;
+	var h:Int;
+	var elementMap:Map<String, Dynamic> = new Map();
+
+	var containerID = 'container-hero-svg2';
+	var idArr = ['astronaut', 'rocket', 'saturnring', 'planet'];
+
+	// var containerArr = ['container-hero-html', 'container-hero-svg', 'container-hero-svg2'];
+
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
-			// console.info('MainGoSVG - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
-			// console.info(GoSVG.version());
+			console.info('MainGoSVG - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
+			console.info(GoSVG.version());
 
-			// init0();
-
-			// init1();
-			// initRotationTest();
-			// initMove();
+			setupListeners();
+			setContainer();
+			init();
+			convertSrcToSVG();
 		});
 	}
 
-	function initMove() {
-		var randomY = (Math.random() * 200) - 10;
-		var _obj = GoSVG.svg(cast document.getElementById('rect-2'));
-		GoSVG.to(_obj.el, 5).x(randomY) //
-			// .delay(1)
-			.onComplete(function() {
-				trace('onComplete Rect');
-				initMove();
-			});
+	function setupListeners() {
+		window.onresize = function() {
+			// Your code to handle the resize event goes here
+			console.log("Window resized!");
+			setContainer();
+		};
 	}
 
-	function initRotationTest() {
-		console.info('onComplete');
-		// var svgObject = GoSVG.svg(cast document.getElementById('simple-example'));
-		var randomOpacity = Math.random();
-		var randomRotation = Math.random() * 360;
-
-		// var _obj = GoSVG.svg(cast document.getElementById('rect-2'));
-		// trace(_obj);
-		// GoSVG.to(_obj.el, 5)
-		// 	.rotation(100, _obj.centerX, _obj.centerY)
-		// 	.delay(1)
-		// 	.onComplete(function() {
-		// 		trace('onComplete');
-		// 	});
-
-		// .onComplete(initRotationTest)
-		// .onUpdate(function() {
-		// 	trace('onUpdate');// .pos(svgObject.width * Math.random(), svgObject.height * Math.random())
-		// .opacity(randomOpacity)
-		// .scale(Math.random() * 10)// .yoyo()
-		// .onUpdate(init2OnUpdateHandler)
-		// });
-
-		// var _obj = GoSVG.svg(cast document.getElementById('ellipse-2'));
-		// GoSVG.to(_obj.el, 5)
-		// 	.rotation(100, _obj.centerX, _obj.centerY)
-		// 	.delay(2)
-		// 	.onComplete(function() {
-		// 		trace('onComplete');
-		// 	});
-
-		// var _obj = GoSVG.svg(cast document.getElementById('circle-2'));
-		// GoSVG.to(_obj.el, 5)
-		// 	.rotation(100, _obj.centerX, _obj.centerY)
-		// 	.delay(3)
-		// 	.onComplete(function() {
-		// 		trace('onComplete');
-		// 	});
-
-		var _obj = GoSVG.svg(cast document.getElementById('line-2'));
-		GoSVG.to(_obj.el, 5)
-			.rotation(100, _obj.centerX, _obj.centerY)
-			.delay(4)
-			.onComplete(function() {
-				trace('onComplete');
-			});
-
-		var _obj = GoSVG.svg(cast document.getElementById('text-3'));
-		// trace(_obj);
-		GoSVG.to(_obj.el, 5).rotation(180, _obj.centerX, _obj.centerY).onComplete(function() {
-			trace('onComplete');
-		});
-
-		var _obj = GoSVG.svg(cast document.getElementById('polygon-2'));
-		GoSVG.to(_obj.el, 5).rotation(180, _obj.centerX, _obj.centerY).onComplete(function() {
-			trace('onComplete');
-		});
-
-		var _obj = GoSVG.svg(cast document.getElementById('polyline-2'));
-		GoSVG.to(_obj.el, 5).rotation(180, _obj.centerX, _obj.centerY).onComplete(function() {
-			trace('onComplete');
-		});
-
-		var _obj = GoSVG.svg(cast document.getElementById('path-2'));
-		GoSVG.to(_obj.el, 5).rotation(180, _obj.centerX, _obj.centerY).onComplete(function() {
-			trace('onComplete');
-		});
+	function setContainer() {
+		var _container:DivElement = cast document.getElementById(containerID);
+		this.w = _container.clientWidth;
+		this.h = _container.clientHeight;
+		console.log(_container.clientWidth);
+		console.log(_container.clientHeight);
 	}
 
-	function init2OnUpdateHandler(?time) {
-		var text = document.getElementById('text-2');
-		text.innerHTML = 'time: ${time}';
+	function init() {}
+
+	function convertSrcToSVG() {
+		// Get the container element
+		var container:DivElement = cast document.getElementById(containerID);
+		// Get the image element inside the container
+		var image:Image = cast container.querySelector("img");
+		// Get the src attribute of the image
+		// var src = image.getAttribute("src");
+		// Define the URL of the SVG file
+		// var url = "images/svg/fake.svg";
+		var url = image.src;
+		// Create a new Http instance
+		var http = new Http(url);
+		// Define a callback function to handle the response
+		http.onData = function(data:String) {
+			// use the svg into the element
+			container.innerHTML = data;
+
+			getDataSBG();
+		};
+		// Define a callback function to handle errors
+		http.onError = function(error:String) {
+			// Log an error message if the request failed
+			trace("Failed to load SVG: " + error);
+		};
+		// Send the request
+		http.request();
 	}
 
-	function init1() {
-		var svgs = document.getElementsByTagName('svg');
-		trace(svgs.length);
+	function getDataSBG() {
+		var container:DivElement = cast document.getElementById(containerID);
+		var astronaut:SVGElement = cast container.querySelector("#astronaut");
 
-		var svg:SVGElement = cast document.getElementsByTagName('svg')[0];
-		var children = (svg.children);
-		for (i in children) {
-			var child = i;
-			// console.log(i.tagName);
-		}
+		console.log(astronaut);
+		// console.log(Type.typeof(astronaut));
 
-		var svgViewBox = svg.getAttribute('viewBox');
-		trace('${svgViewBox}');
+		// console.log(astronaut.getTransformToElement);
+		// console.log(astronaut.transform);
+		// console.log(astronaut.currentTranslate);
 
-		var svgRect:Rect = (svg.viewBox.baseVal);
-		trace(svgRect);
+		// astronaut.setAttribute('transform', 'rotate(-10 50 100) translate(-36 45.5) skewX(40) skewY(10) scale(1 0.5)');
+		// console.log(astronaut.getAttribute('transform'));
 
-		// var svgViewBoxArray = svgViewBox.split(' ');
-		// var svgX = svgViewBoxArray[0];
-		// var svgY = svgViewBoxArray[1];
-		// var svgWidth:Float = Std.parseFloat(svgViewBoxArray[2]);
-		// var svgHeight:Float = Std.parseFloat(svgViewBoxArray[3]);
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform
+		/**
+			*
+						*  transform="rotate(-10 50 100)
+									   translate(-36 45.5)
+									   skewX(40)
+									   scale(1 0.5)"
+		 */
 
-		// untyped again <line>
-		Syntax.code('GoSVG.to({0}, {1}).x({2}).y({3})', document.getElementById('line-1'), 5, 500, 100);
-
-		// get <polyline>
-		var _svgPolyLine:Element = cast document.getElementById('polyline-1');
-		// trace(_svgPolyLine);
-		_svgPolyLine.setAttribute('transform', 'translate(333)');
-
-		// use externs <polygon>
-		// cc.lets.extern.GoSVG.to(cast document.getElementById('polygon-1'), 2).x(200).y(300);
-		cc.lets.extern.GoSVG.to(cast document.getElementById('polygon-1'), 5).pos(300, 300);
-
-		cc.lets.extern.GoSVG.to(cast document.getElementById('group-plus'), 5).pos(Math.random() * svgRect.width, Math.random() * svgRect.height);
-		// cc.lets.extern.GoSVG.to(cast document.getElementById('group-plus'), 5).pos(400, 10);
+		// GoSVG.to(astronaut, 2).y(-100).onComplete(() -> console.log(astronaut));
+		// GoSVG.to(astronaut, 2).x(100).onComplete(() -> console.log(astronaut));
+		GoSVG.to(astronaut, 2)
+			.x(100)
+			.y(-100)
+			.yoyo()
+			.ease(Quad.easeInOut)
+			.onComplete(() -> console.log(astronaut));
+		// GoSVG.to(astronaut, 2);
 	}
 
-	function init0() {
-		// search for element in svg
-		var svgCircle:Element = cast document.getElementById('circle-1');
-		// console.log('${svgCircle}');
-		// set dat by hand
-		svgCircle.setAttributeNS(null, 'cx', '111');
-		svgCircle.setAttribute('cy', '111');
-
-		// use untyped code <circle>
-		Syntax.code('GoSVG.to({0}, {1}).x({2}).y({3})', svgCircle, 5, 500, 100);
-
-		// get rect <rect>
-		var svgRect:Element = cast document.getElementById('rect-1');
-		// console.log('${svgRect}');
-		// Syntax.code('GoSVG.test({0}, {1})', svgCircle, 2.4);
-		Syntax.code('GoSVG.to({0}, {1}).x({2}).y({3})', svgRect, 10, 500, 555);
-
-		// var _svgRect:js.html.svg.RectElement = cast document.getElementById('rect-1');
-		// _svgRect.setAttributeNS(null, 'x', '100');
-		// _svgRect.setAttribute('y', '100');
-
-		// console.log('${_svgRect.x}');
-		// trace(Reflect.field(_svgRect, 'y'));
-	}
+	// ____________________________________ main ____________________________________
 
 	static public function main() {
 		var app = new MainGoSVG();

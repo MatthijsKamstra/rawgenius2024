@@ -6,6 +6,28 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var EReg = function(r,opt) {
+	this.r = new RegExp(r,opt.split("u").join(""));
+};
+EReg.__name__ = true;
+EReg.prototype = {
+	match: function(s) {
+		if(this.r.global) {
+			this.r.lastIndex = 0;
+		}
+		this.r.m = this.r.exec(s);
+		this.r.s = s;
+		return this.r.m != null;
+	}
+	,matched: function(n) {
+		if(this.r.m != null && n >= 0 && n < this.r.m.length) {
+			return this.r.m[n];
+		} else {
+			throw haxe_Exception.thrown("EReg::matched");
+		}
+	}
+	,__class__: EReg
+};
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.remove = function(a,obj) {
@@ -141,14 +163,54 @@ var GoSVG = $hx_exports["GoSVG"] = function(target,duration) {
 	this._target = target;
 	this._duration = this.getDuration(duration);
 	this._initTime = this._duration;
-	this._transform = { };
+	this._transform = this.getStartTransform(target);
+	this._startTransform = this.getDefaultTransform();
+	this._startTransform = this.getStartTransform(target);
 	GoSVG._tweens.push(this);
 	if(this.DEBUG) {
 		$global.console.log("New GoSVG - _id: \"" + this._id + "\" / _duration: " + this._duration + " / _initTime: " + this._initTime + " / _tweens.length: " + GoSVG._tweens.length);
 	}
 	haxe_Timer.delay($bind(this,this.init),1);
+	$global.console.log(this._transform);
+	$global.console.log(this._startTransform);
 };
 GoSVG.__name__ = true;
+GoSVG.extractTransformValues = function(transformString) {
+	var values = new haxe_ds_StringMap();
+	var patterns_h = Object.create(null);
+	patterns_h["rotate"] = new EReg("rotate\\((.*?)\\)","");
+	patterns_h["translate"] = new EReg("translate\\((.*?)\\)","");
+	patterns_h["skewX"] = new EReg("skewX\\((.*?)\\)","");
+	patterns_h["skewY"] = new EReg("skewY\\((.*?)\\)","");
+	patterns_h["scale"] = new EReg("scale\\((.*?)\\)","");
+	var h = patterns_h;
+	var _g_h = h;
+	var _g_keys = Object.keys(h);
+	var _g_length = _g_keys.length;
+	var _g_current = 0;
+	while(_g_current < _g_length) {
+		var key = _g_keys[_g_current++];
+		var pattern = patterns_h[key];
+		if(pattern.match(transformString)) {
+			var splitStr = " ";
+			if(pattern.matched(1).indexOf(",") != -1) {
+				splitStr = ",";
+			}
+			var _this = pattern.matched(1).split(splitStr);
+			var result = new Array(_this.length);
+			var _g = 0;
+			var _g1 = _this.length;
+			while(_g < _g1) {
+				var i = _g++;
+				result[i] = parseFloat(_this[i]);
+			}
+			var match = result;
+			haxe_Log.trace(key,{ fileName : "cc/lets/GoSVG.hx", lineNumber : 138, className : "cc.lets.GoSVG", methodName : "extractTransformValues", customParams : [match]});
+			values.h[key] = match;
+		}
+	}
+	return values;
+};
 GoSVG.test = function(target,duration) {
 	if(duration == null) {
 		duration = 1.2;
@@ -220,7 +282,7 @@ GoSVG.svg = function(element) {
 		break;
 	default:
 		var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
-		console.log("cc/lets/GoSVG.hx:164:","case \"" + _id + "\": trace(\"" + _id + "\");");
+		haxe_Log.trace("case \"" + _id + "\": trace(\"" + _id + "\");",{ fileName : "cc/lets/GoSVG.hx", lineNumber : 309, className : "cc.lets.GoSVG", methodName : "svg"});
 		_x = graphic.getBBox().x;
 		_y = graphic.getBBox().y;
 		_width = graphic.getBBox().width;
@@ -321,7 +383,51 @@ GoSVG.version = function() {
 	return GoSVG.VERSION;
 };
 GoSVG.prototype = {
-	width: function(value) {
+	getDefaultTransform: function() {
+		return { translate : { x : 0, y : 0}, scale : { x : 0, y : 0}, rotate : { degree : 0, x : 0, y : 0}, skewX : { degree : 0}, skewY : { degree : 0}};
+	}
+	,getStartTransform: function(target) {
+		var _transform = { };
+		if(target.hasAttribute(this.TRANSFORM)) {
+			var _trans = target.getAttribute(this.TRANSFORM);
+			var transformString = _trans;
+			var transformValues = GoSVG.extractTransformValues(transformString);
+			if(Object.prototype.hasOwnProperty.call(transformValues.h,"rotate")) {
+				var _arr = transformValues.h["rotate"];
+				_transform.rotate = { degree : _arr[0]};
+				if(_arr[1] != null) {
+					_transform.rotate.x = _arr[1];
+				}
+				if(_arr[2] != null) {
+					_transform.rotate.y = _arr[2];
+				}
+			}
+			if(Object.prototype.hasOwnProperty.call(transformValues.h,"translate")) {
+				var _arr = transformValues.h["translate"];
+				_transform.translate = { x : _arr[0]};
+				if(_arr[1] != null) {
+					_transform.translate.y = _arr[1];
+				}
+			}
+			if(Object.prototype.hasOwnProperty.call(transformValues.h,"skewX")) {
+				var _arr = transformValues.h["skewX"];
+				_transform.skewX = { degree : _arr[0]};
+			}
+			if(Object.prototype.hasOwnProperty.call(transformValues.h,"skewY")) {
+				var _arr = transformValues.h["skewY"];
+				_transform.skewY = { degree : _arr[0]};
+			}
+			if(Object.prototype.hasOwnProperty.call(transformValues.h,"scale")) {
+				var _arr = transformValues.h["scale"];
+				_transform.scale = { x : _arr[0]};
+				if(_arr[1] != null) {
+					_transform.scale.y = _arr[1];
+				}
+			}
+		}
+		return _transform;
+	}
+	,width: function(value) {
 		var objValue = 0.0;
 		if(this._target.hasAttribute("width")) {
 			objValue = parseFloat(this._target.getAttribute("width"));
@@ -637,36 +743,41 @@ GoSVG.prototype = {
 			switch(n) {
 			case "rotation":
 				this._transform.rotate.degree = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform());
+				this._target.setAttribute(this.TRANSFORM,this.getTransform("rotation"));
 				break;
 			case "scale":
 				this._transform.scale.x = value;
 				this._transform.scale.y = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform());
+				this._target.setAttribute(this.TRANSFORM,this.getTransform("scale"));
 				break;
 			case "transform-x":
 				this._transform.translate.x = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform());
+				this._target.setAttribute(this.TRANSFORM,this.getTransform("x"));
 				break;
 			case "transform-y":
 				this._transform.translate.y = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform());
+				this._target.setAttribute(this.TRANSFORM,this.getTransform("y"));
 				break;
 			default:
 				this._target.setAttribute(n,"" + value);
 			}
 		}
 	}
-	,getTransform: function() {
+	,getTransform: function(stuff) {
 		var str = "";
-		if(this._transform.translate != null) {
-			if(this._transform.translate.y == null) {
-				str += "translate(" + this._transform.translate.x + ") ";
-			} else if(this._transform.translate.x == null) {
-				str += "translate(0 " + this._transform.translate.y + ") ";
+		switch(stuff) {
+		case "x":
+			if(this._startTransform.translate.y == null) {
+				str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + ") ";
 			} else {
-				str += "translate(" + this._transform.translate.x + ", " + this._transform.translate.y + ") ";
+				str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + " " + this._transform.translate.y + ") ";
 			}
+			break;
+		case "y":
+			str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + " " + (this._transform.translate.y + this._startTransform.translate.y) + ") ";
+			break;
+		default:
+			haxe_Log.trace("case '" + stuff + "': trace ('" + stuff + "');",{ fileName : "cc/lets/GoSVG.hx", lineNumber : 891, className : "cc.lets.GoSVG", methodName : "getTransform"});
 		}
 		if(this._transform.rotate != null) {
 			if(this._transform.rotate.x == null) {
@@ -880,6 +991,31 @@ haxe_Exception.prototype = $extend(Error.prototype,{
 	}
 	,__class__: haxe_Exception
 });
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.formatOutput = function(v,infos) {
+	var str = Std.string(v);
+	if(infos == null) {
+		return str;
+	}
+	var pstr = infos.fileName + ":" + infos.lineNumber;
+	if(infos.customParams != null) {
+		var _g = 0;
+		var _g1 = infos.customParams;
+		while(_g < _g1.length) {
+			var v = _g1[_g];
+			++_g;
+			str += ", " + Std.string(v);
+		}
+	}
+	return pstr + ": " + str;
+};
+haxe_Log.trace = function(v,infos) {
+	var str = haxe_Log.formatOutput(v,infos);
+	if(typeof(console) != "undefined" && console.log != null) {
+		console.log(str);
+	}
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {

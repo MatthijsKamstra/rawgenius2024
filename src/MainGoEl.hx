@@ -14,22 +14,21 @@ import model.constants.App;
 
 /**
  * @author Matthijs Kamstra aka [mck]
- * MIT
  */
 class MainGoEl {
 	var w:Int;
 	var h:Int;
 	var elementMap:Map<String, Dynamic> = new Map();
 
-	var 	 = ['astronaut', 'rocket', 'saturnring', 'planet'];
-	var containerArr = ['container-hero-html', 'container-hero-svg', 'container-hero-svg2'];
+	var containerID = 'container-hero-html';
+	var idArr = ['astronaut', 'rocket', 'saturnring', 'planet'];
+
+	// var containerArr = ['container-hero-html', 'container-hero-svg', 'container-hero-svg2'];
 
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			console.info('MainGo - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
 			console.info(GoEl.version());
-
-			convertSrcToSVG();
 
 			setupListeners();
 			setContainer();
@@ -39,54 +38,39 @@ class MainGoEl {
 		});
 	}
 
-	function convertSrcToSVG() {
-		// Get the container element
-		var container:DivElement = cast document.getElementById("container-hero-svg2");
-		// Get the image element inside the container
-		var image:Image = cast container.querySelector("img");
-		// Get the src attribute of the image
-		// var src = image.getAttribute("src");
-		// Define the URL of the SVG file
-		// var url = "images/svg/fake.svg";
-		var url = image.src;
-		// Create a new Http instance
-		var http = new Http(url);
-		// Define a callback function to handle the response
-		http.onData = function(data:String) {
-			// use the svg into the element
-			container.innerHTML = data;
-
-			getDataSBG();
+	function setupListeners() {
+		window.onresize = function() {
+			// Your code to handle the resize event goes here
+			console.log("Window resized!");
+			setContainer();
 		};
-		// Define a callback function to handle errors
-		http.onError = function(error:String) {
-			// Log an error message if the request failed
-			trace("Failed to load SVG: " + error);
-		};
-		// Send the request
-		http.request();
 	}
 
-	function getDataSBG() {
-		var container:DivElement = cast document.getElementById("container-hero-svg2");
-		var astronaut = container.querySelector("#astronaut");
-
-		console.log(astronaut);
+	function setContainer() {
+		var _container:DivElement = cast document.getElementById(containerID);
+		this.w = _container.clientWidth;
+		this.h = _container.clientHeight;
+		console.log(_container.clientWidth);
+		console.log(_container.clientHeight);
 	}
+
+	// ____________________________________ rocket ____________________________________
 
 	function initRocket() {
 		var el:DivElement = cast document.getElementById('rocket');
 		var obj:FooObj = this.elementMap.get('rocket');
-		GoEl.to(el, 10).x(100).y(100).onComplete(foobar);
+		GoEl.to(el, 10).x(100).y(100).onComplete(onRocketComplete);
 		// Go.orbit(_el, obj.)
 	}
 
-	function foobar() {
-		console.log('x');
+	function onRocketComplete() {
+		console.log('onRocketComplete');
 	}
 
+	// ____________________________________ collect start data ____________________________________
+
 	function collectDefault() {
-		for (i in 0...	.length) {
+		for (i in 0...idArr.length) {
 			var _idArr = idArr[i];
 			var _el:DivElement = cast document.getElementById(_idArr);
 			this.collectDefaultState(_el);
@@ -123,21 +107,7 @@ class MainGoEl {
 		this.elementMap.set(_id, obj);
 	}
 
-	function setupListeners() {
-		window.onresize = function() {
-			// Your code to handle the resize event goes here
-			console.log("Window resized!");
-			setContainer();
-		};
-	}
-
-	function setContainer() {
-		var _container:DivElement = cast document.getElementById('container-hero-html');
-		this.w = _container.clientWidth;
-		this.h = _container.clientHeight;
-		console.log(_container.clientWidth);
-		console.log(_container.clientHeight);
-	}
+	// ____________________________________ main ____________________________________
 
 	static public function main() {
 		var app = new MainGoEl();

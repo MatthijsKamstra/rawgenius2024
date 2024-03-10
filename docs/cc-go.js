@@ -30,6 +30,25 @@ EReg.prototype = {
 };
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) {
+		return undefined;
+	}
+	return x;
+};
+HxOverrides.substr = function(s,pos,len) {
+	if(len == null) {
+		len = s.length;
+	} else if(len < 0) {
+		if(pos == 0) {
+			len = s.length + len;
+		} else {
+			return "";
+		}
+	}
+	return s.substr(pos,len);
+};
 HxOverrides.remove = function(a,obj) {
 	var i = a.indexOf(obj);
 	if(i == -1) {
@@ -78,6 +97,39 @@ var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
+};
+var StringTools = function() { };
+StringTools.__name__ = true;
+StringTools.isSpace = function(s,pos) {
+	var c = HxOverrides.cca(s,pos);
+	if(!(c > 8 && c < 14)) {
+		return c == 32;
+	} else {
+		return true;
+	}
+};
+StringTools.ltrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,r)) ++r;
+	if(r > 0) {
+		return HxOverrides.substr(s,r,l - r);
+	} else {
+		return s;
+	}
+};
+StringTools.rtrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,l - r - 1)) ++r;
+	if(r > 0) {
+		return HxOverrides.substr(s,0,l - r);
+	} else {
+		return s;
+	}
+};
+StringTools.trim = function(s) {
+	return StringTools.ltrim(StringTools.rtrim(s));
 };
 var cc_lets_Easing = function() { };
 cc_lets_Easing.__name__ = true;
@@ -143,6 +195,25 @@ cc_lets_Easing.reflect = function(f) {
 	};
 };
 var GoSVG = $hx_exports["GoSVG"] = function(target,duration) {
+	var _g = new haxe_ds_StringMap();
+	var value = new EReg("translate\\((.*?)\\)","");
+	_g.h["translate"] = value;
+	var value = new EReg("rotate\\((.*?)\\)","");
+	_g.h["rotate"] = value;
+	var value = new EReg("skewX\\((.*?)\\)","");
+	_g.h["skewX"] = value;
+	var value = new EReg("skewY\\((.*?)\\)","");
+	_g.h["skewY"] = value;
+	var value = new EReg("scale\\((.*?)\\)","");
+	_g.h["scale"] = value;
+	this.patterns = _g;
+	this.SCALE = "scale";
+	this.SKEWY = "skewY";
+	this.SKEWX = "skewX";
+	this.ROTATE = "rotate";
+	this.TRANSLATE_Y = "translate-y";
+	this.TRANSLATE_X = "translate-x";
+	this.TRANSLATE = "translate";
 	this.TRANSFORM = "transform";
 	this.DEBUG = false;
 	this.FRAME_RATE = 60;
@@ -163,7 +234,7 @@ var GoSVG = $hx_exports["GoSVG"] = function(target,duration) {
 	this._target = target;
 	this._duration = this.getDuration(duration);
 	this._initTime = this._duration;
-	this._transform = this.getStartTransform(target);
+	this._transform = this.getDefaultTransform();
 	this._startTransform = this.getDefaultTransform();
 	this._startTransform = this.getStartTransform(target);
 	GoSVG._tweens.push(this);
@@ -171,46 +242,12 @@ var GoSVG = $hx_exports["GoSVG"] = function(target,duration) {
 		$global.console.log("New GoSVG - _id: \"" + this._id + "\" / _duration: " + this._duration + " / _initTime: " + this._initTime + " / _tweens.length: " + GoSVG._tweens.length);
 	}
 	haxe_Timer.delay($bind(this,this.init),1);
-	$global.console.log(this._transform);
-	$global.console.log(this._startTransform);
+	if(this.DEBUG) {
+		$global.console.info("_transform: " + Std.string(this._transform));
+		$global.console.info("_startTransform: " + Std.string(this._startTransform));
+	}
 };
 GoSVG.__name__ = true;
-GoSVG.extractTransformValues = function(transformString) {
-	var values = new haxe_ds_StringMap();
-	var patterns_h = Object.create(null);
-	patterns_h["rotate"] = new EReg("rotate\\((.*?)\\)","");
-	patterns_h["translate"] = new EReg("translate\\((.*?)\\)","");
-	patterns_h["skewX"] = new EReg("skewX\\((.*?)\\)","");
-	patterns_h["skewY"] = new EReg("skewY\\((.*?)\\)","");
-	patterns_h["scale"] = new EReg("scale\\((.*?)\\)","");
-	var h = patterns_h;
-	var _g_h = h;
-	var _g_keys = Object.keys(h);
-	var _g_length = _g_keys.length;
-	var _g_current = 0;
-	while(_g_current < _g_length) {
-		var key = _g_keys[_g_current++];
-		var pattern = patterns_h[key];
-		if(pattern.match(transformString)) {
-			var splitStr = " ";
-			if(pattern.matched(1).indexOf(",") != -1) {
-				splitStr = ",";
-			}
-			var _this = pattern.matched(1).split(splitStr);
-			var result = new Array(_this.length);
-			var _g = 0;
-			var _g1 = _this.length;
-			while(_g < _g1) {
-				var i = _g++;
-				result[i] = parseFloat(_this[i]);
-			}
-			var match = result;
-			haxe_Log.trace(key,{ fileName : "cc/lets/GoSVG.hx", lineNumber : 138, className : "cc.lets.GoSVG", methodName : "extractTransformValues", customParams : [match]});
-			values.h[key] = match;
-		}
-	}
-	return values;
-};
 GoSVG.test = function(target,duration) {
 	if(duration == null) {
 		duration = 1.2;
@@ -282,7 +319,7 @@ GoSVG.svg = function(element) {
 		break;
 	default:
 		var graphic = js_Boot.__cast(svg , SVGGraphicsElement);
-		haxe_Log.trace("case \"" + _id + "\": trace(\"" + _id + "\");",{ fileName : "cc/lets/GoSVG.hx", lineNumber : 309, className : "cc.lets.GoSVG", methodName : "svg"});
+		console.log("cc/lets/GoSVG.hx:302:","case \"" + _id + "\": trace(\"" + _id + "\");");
 		_x = graphic.getBBox().x;
 		_y = graphic.getBBox().y;
 		_width = graphic.getBBox().width;
@@ -386,12 +423,41 @@ GoSVG.prototype = {
 	getDefaultTransform: function() {
 		return { translate : { x : 0, y : 0}, scale : { x : 0, y : 0}, rotate : { degree : 0, x : 0, y : 0}, skewX : { degree : 0}, skewY : { degree : 0}};
 	}
+	,extractTransformValues: function(transformString) {
+		var values = new haxe_ds_StringMap();
+		var h = this.patterns.h;
+		var key_h = h;
+		var key_keys = Object.keys(h);
+		var key_length = key_keys.length;
+		var key_current = 0;
+		while(key_current < key_length) {
+			var key = key_keys[key_current++];
+			var pattern = this.patterns.h[key];
+			if(pattern.match(transformString)) {
+				var splitStr = " ";
+				if(pattern.matched(1).indexOf(",") != -1) {
+					splitStr = ",";
+				}
+				var _this = pattern.matched(1).split(splitStr);
+				var result = new Array(_this.length);
+				var _g = 0;
+				var _g1 = _this.length;
+				while(_g < _g1) {
+					var i = _g++;
+					result[i] = parseFloat(_this[i]);
+				}
+				var match = result;
+				values.h[key] = match;
+			}
+		}
+		return values;
+	}
 	,getStartTransform: function(target) {
-		var _transform = { };
+		var _transform = this.getDefaultTransform();
 		if(target.hasAttribute(this.TRANSFORM)) {
 			var _trans = target.getAttribute(this.TRANSFORM);
 			var transformString = _trans;
-			var transformValues = GoSVG.extractTransformValues(transformString);
+			var transformValues = this.extractTransformValues(transformString);
 			if(Object.prototype.hasOwnProperty.call(transformValues.h,"rotate")) {
 				var _arr = transformValues.h["rotate"];
 				_transform.rotate = { degree : _arr[0]};
@@ -538,12 +604,13 @@ GoSVG.prototype = {
 		return this;
 	}
 	,rotation: function(degree,x,y) {
+		var key = this.ROTATE;
 		var objValue = 0.0;
-		if(this._target.hasAttribute("rotation")) {
-			objValue = parseFloat(this._target.getAttribute("rotation"));
+		if(this._target.hasAttribute(key)) {
+			objValue = parseFloat(this._target.getAttribute(key));
 		}
-		var _range = { key : "rotation", from : this._isFrom ? degree : objValue, to : !this._isFrom ? degree : objValue};
-		this._props.h["rotation"] = _range;
+		var _range = { key : key, from : this._isFrom ? degree : objValue, to : !this._isFrom ? degree : objValue};
+		this._props.h[key] = _range;
 		if(this._isFrom) {
 			this.updateProperties(0);
 		}
@@ -557,15 +624,20 @@ GoSVG.prototype = {
 		if(y != null) {
 			this._transform.rotate.y = y;
 		}
+		var _trans = this._target.getAttribute(this.TRANSFORM);
+		if(_trans.indexOf(this.ROTATE) == -1) {
+			this._target.setAttribute(this.TRANSFORM,"" + _trans + " rotate(0)");
+		}
 		return this;
 	}
 	,degree: function(degree) {
+		var key = this.ROTATE;
 		var objValue = 0.0;
-		if(this._target.hasAttribute("rotation")) {
-			objValue = parseFloat(this._target.getAttribute("rotation"));
+		if(this._target.hasAttribute(key)) {
+			objValue = parseFloat(this._target.getAttribute(key));
 		}
-		var _range = { key : "rotation", from : this._isFrom ? degree : objValue, to : !this._isFrom ? degree : objValue};
-		this._props.h["rotation"] = _range;
+		var _range = { key : key, from : this._isFrom ? degree : objValue, to : !this._isFrom ? degree : objValue};
+		this._props.h[key] = _range;
 		if(this._isFrom) {
 			this.updateProperties(0);
 		}
@@ -573,13 +645,14 @@ GoSVG.prototype = {
 		return this;
 	}
 	,radians: function(degree) {
+		var key = this.ROTATE;
 		var value = degree * Math.PI / 180;
 		var objValue = 0.0;
-		if(this._target.hasAttribute("rotation")) {
-			objValue = parseFloat(this._target.getAttribute("rotation"));
+		if(this._target.hasAttribute(key)) {
+			objValue = parseFloat(this._target.getAttribute(key));
 		}
-		var _range = { key : "rotation", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["rotation"] = _range;
+		var _range = { key : key, from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
+		this._props.h[key] = _range;
 		if(this._isFrom) {
 			this.updateProperties(0);
 		}
@@ -740,66 +813,68 @@ GoSVG.prototype = {
 			var n = n_keys[n_current++];
 			var range = this._props.h[n];
 			var value = this._easing.ease(time,range.from,range.to - range.from,this._duration);
+			var _currentTransform = this._target.getAttribute(this.TRANSFORM);
 			switch(n) {
-			case "rotation":
+			case "rotate":
 				this._transform.rotate.degree = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform("rotation"));
+				var _getTransform = this.getTransform(this.ROTATE);
+				var r = this.patterns.h[this.ROTATE];
+				_currentTransform = _currentTransform.replace(r.r,_getTransform);
+				this._target.setAttribute(this.TRANSFORM,_currentTransform);
 				break;
 			case "scale":
 				this._transform.scale.x = value;
 				this._transform.scale.y = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform("scale"));
+				var _getTransform1 = this.getTransform("scale");
+				var r1 = this.patterns.h[this.SCALE];
+				_currentTransform = _currentTransform.replace(r1.r,_getTransform1);
+				this._target.setAttribute(this.TRANSFORM,_currentTransform);
 				break;
 			case "transform-x":
 				this._transform.translate.x = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform("x"));
+				var _getTransform2 = this.getTransform("x");
+				var r2 = this.patterns.h[this.TRANSLATE];
+				_currentTransform = _currentTransform.replace(r2.r,_getTransform2);
+				this._target.setAttribute(this.TRANSFORM,_currentTransform);
 				break;
 			case "transform-y":
 				this._transform.translate.y = value;
-				this._target.setAttribute(this.TRANSFORM,this.getTransform("y"));
+				var _getTransform3 = this.getTransform("y");
+				var r3 = this.patterns.h[this.TRANSLATE];
+				_currentTransform = _currentTransform.replace(r3.r,_getTransform3);
+				this._target.setAttribute(this.TRANSFORM,_currentTransform);
 				break;
 			default:
 				this._target.setAttribute(n,"" + value);
 			}
 		}
 	}
-	,getTransform: function(stuff) {
+	,getTransform: function(dir) {
 		var str = "";
-		switch(stuff) {
+		switch(dir) {
+		case "rotate":
+			if(this._startTransform.rotate.x == null && this._startTransform.rotate.y == null) {
+				str += "rotate(" + (this._transform.rotate.degree + this._startTransform.rotate.degree) + ") ";
+			} else if(this._startTransform.rotate.y == null) {
+				str += "rotate(" + (this._transform.rotate.degree + this._startTransform.rotate.degree) + " " + (this._transform.rotate.x + this._startTransform.rotate.x) + ") ";
+			} else {
+				str += "rotate(" + (this._transform.rotate.degree + this._startTransform.rotate.degree) + " " + (this._transform.rotate.x + this._startTransform.rotate.x) + " " + (this._transform.rotate.y + this._startTransform.rotate.y) + ") ";
+			}
+			break;
 		case "x":
 			if(this._startTransform.translate.y == null) {
 				str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + ") ";
 			} else {
-				str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + " " + this._transform.translate.y + ") ";
+				str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + " " + (this._transform.translate.y + this._startTransform.translate.y) + ") ";
 			}
 			break;
 		case "y":
 			str += "translate(" + (this._transform.translate.x + this._startTransform.translate.x) + " " + (this._transform.translate.y + this._startTransform.translate.y) + ") ";
 			break;
 		default:
-			haxe_Log.trace("case '" + stuff + "': trace ('" + stuff + "');",{ fileName : "cc/lets/GoSVG.hx", lineNumber : 891, className : "cc.lets.GoSVG", methodName : "getTransform"});
+			console.log("cc/lets/GoSVG.hx:914:","case '" + dir + "': trace ('" + dir + "');");
 		}
-		if(this._transform.rotate != null) {
-			if(this._transform.rotate.x == null) {
-				str += "rotate(" + this._transform.rotate.degree + ") ";
-			} else {
-				str += "rotate(" + this._transform.rotate.degree + ", " + this._transform.rotate.x + ", " + this._transform.rotate.y + ") ";
-			}
-		}
-		if(this._transform.scale != null) {
-			if(this._transform.scale.y == null) {
-				str += "scale(" + this._transform.scale.x + " ";
-			} else {
-				str += "scale(" + this._transform.scale.x + "," + this._transform.scale.y + ") ";
-			}
-		}
-		if(this._transform.skewX != null) {
-			str += "skexX(" + this._transform.skewX.degree + ") ";
-		}
-		if(this._transform.skewY != null) {
-			str += "skexX(" + this._transform.skewY.degree + ") ";
-		}
-		return str;
+		return StringTools.trim(str);
 	}
 	,complete: function() {
 		if(this.DEBUG) {
@@ -991,31 +1066,6 @@ haxe_Exception.prototype = $extend(Error.prototype,{
 	}
 	,__class__: haxe_Exception
 });
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.formatOutput = function(v,infos) {
-	var str = Std.string(v);
-	if(infos == null) {
-		return str;
-	}
-	var pstr = infos.fileName + ":" + infos.lineNumber;
-	if(infos.customParams != null) {
-		var _g = 0;
-		var _g1 = infos.customParams;
-		while(_g < _g1.length) {
-			var v = _g1[_g];
-			++_g;
-			str += ", " + Std.string(v);
-		}
-	}
-	return pstr + ": " + str;
-};
-haxe_Log.trace = function(v,infos) {
-	var str = haxe_Log.formatOutput(v,infos);
-	if(typeof(console) != "undefined" && console.log != null) {
-		console.log(str);
-	}
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {

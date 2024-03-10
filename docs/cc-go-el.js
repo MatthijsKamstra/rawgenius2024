@@ -31,7 +31,7 @@ var MainGoEl = function() {
 	this.elementMap = new haxe_ds_StringMap();
 	var _gthis = this;
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGo - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-08 17:25:07" + " ");
+		$global.console.info("MainGo - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-10 17:19:34" + " ");
 		$global.console.info(cc_lets_GoEl.version());
 		_gthis.setupListeners();
 		_gthis.setContainer();

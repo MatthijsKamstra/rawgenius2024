@@ -5,6 +5,7 @@
     rgba(27, 24, 31, 1) 0%,
     rgba(50, 4, 89, 1) 85%
   );
+  min-height: 600px;
   height: 50vh;
 }
 

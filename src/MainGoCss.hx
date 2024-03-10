@@ -1,7 +1,7 @@
 package;
 
 import cc.lets.Easing;
-import cc.lets.GoSVG;
+import cc.lets.GoCss;
 import cc.lets.easing.Quad.QuadEaseInOut;
 import cc.lets.easing.Quad;
 import haxe.Http;
@@ -18,7 +18,7 @@ import model.constants.App;
 /**
  * @author Matthijs Kamstra aka [mck]
  */
-class MainGoSVG {
+class MainGoCss {
 	var w:Int;
 	var h:Int;
 	var elementMap:Map<String, Dynamic> = new Map();
@@ -30,10 +30,12 @@ class MainGoSVG {
 
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
-			console.info('MainGoSVG - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
-			console.info(GoSVG.version());
+			console.info('MainGoCss - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
+			// console.info(GoCss.version());
+			// console.info(GoCss.toString());
 
 			setupListeners();
+
 			setContainer();
 			init();
 			convertSrcToSVG();
@@ -117,24 +119,24 @@ class MainGoSVG {
 		// GoSVG.to(astronaut, 2).y(-100).onComplete(() -> console.log(astronaut));
 		// GoSVG.to(astronaut, 2).x(100).y(-100).onComplete(() -> console.log(astronaut));
 		// GoSVG.to(astronaut, 2).rotation(10).onComplete(() -> console.log(astronaut));
-		GoSVG.to(astronaut, 2)
-			.x(100)
-			.y(-100)
-			.yoyo()
-			.ease(Quad.easeInOut)
-			.rotation(10)
-			.onComplete(() -> console.log(astronaut));
+		// GoSVG.to(astronaut, 2)
+		// 	.x(100)
+		// 	.y(-100)
+		// 	.yoyo()
+		// 	.ease(Quad.easeInOut)
+		// 	.rotation(10)
+		// 	.onComplete(() -> console.log(astronaut));
 
-		GoSVG.to(rocket, 4)
-			.y(-100)
-			.yoyo()
-			.ease(Quad.easeInOut) // .rotation(10)
-			.onComplete(() -> console.log(rocket));
+		// GoSVG.to(rocket, 4)
+		// 	.y(-100)
+		// 	.yoyo()
+		// 	.ease(Quad.easeInOut) // .rotation(10)
+		// 	.onComplete(() -> console.log(rocket));
 	}
 
 	// ____________________________________ main ____________________________________
 
 	static public function main() {
-		var app = new MainGoSVG();
+		var app = new MainGoCss();
 	}
 }

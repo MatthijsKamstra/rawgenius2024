@@ -1,0 +1,8 @@
+--library cc-go
+-cp src
+-main MainGoCss
+-js docs/cc-go-css.js
+# -D source-map-content
+# -debug
+
+

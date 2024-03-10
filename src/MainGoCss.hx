@@ -31,8 +31,10 @@ class MainGoCss {
 	public function new() {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			console.info('MainGoCss - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
-			// console.info(GoCss.version());
-			// console.info(GoCss.toString());
+
+			var _go = new GoCss({}, 0);
+			console.log('toString(): ' + _go.toString());
+			console.log('getVersion(): ' + _go.getVersion());
 
 			setupListeners();
 
@@ -113,13 +115,13 @@ class MainGoCss {
 
 		// astronaut.setAttribute('transform', 'rotate(0) translate(550 300)');
 		// astronaut.setAttribute('transform', 'rotate(0)');
-		// GoSVG.to(astronaut, 2);
-		// GoSVG.to(astronaut, 2).x(100).onComplete(() -> console.log(astronaut));
-		// GoSVG.to(astronaut, 2).y(100).onComplete(() -> console.log(astronaut));
-		// GoSVG.to(astronaut, 2).y(-100).onComplete(() -> console.log(astronaut));
-		// GoSVG.to(astronaut, 2).x(100).y(-100).onComplete(() -> console.log(astronaut));
-		// GoSVG.to(astronaut, 2).rotation(10).onComplete(() -> console.log(astronaut));
-		// GoSVG.to(astronaut, 2)
+		GoCss.to(astronaut, 2);
+		// GoCss.to(astronaut, 2).x(100).onComplete(() -> console.log(astronaut));
+		// GoCss.to(astronaut, 2).y(100).onComplete(() -> console.log(astronaut));
+		// GoCss.to(astronaut, 2).y(-100).onComplete(() -> console.log(astronaut));
+		// GoCss.to(astronaut, 2).x(100).y(-100).onComplete(() -> console.log(astronaut));
+		// GoCss.to(astronaut, 2).rotation(10).onComplete(() -> console.log(astronaut));
+		// GoCss.to(astronaut, 2)
 		// 	.x(100)
 		// 	.y(-100)
 		// 	.yoyo()
@@ -127,7 +129,7 @@ class MainGoCss {
 		// 	.rotation(10)
 		// 	.onComplete(() -> console.log(astronaut));
 
-		// GoSVG.to(rocket, 4)
+		// GoCss.to(rocket, 4)
 		// 	.y(-100)
 		// 	.yoyo()
 		// 	.ease(Quad.easeInOut) // .rotation(10)

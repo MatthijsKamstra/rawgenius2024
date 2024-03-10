@@ -82,8 +82,10 @@ var MainGoCss = function() {
 	this.elementMap = new haxe_ds_StringMap();
 	var _gthis = this;
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGoCss - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-10 17:19:12" + " ");
-		$global.console.info(cc_lets_GoCss.version());
+		$global.console.info("MainGoCss - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-10 17:58:59" + " ");
+		var _go = new cc_lets_GoCss({ },0);
+		$global.console.log("toString(): " + _go.toString());
+		$global.console.log("getVersion(): " + _go.getVersion());
 		_gthis.setupListeners();
 		_gthis.setContainer();
 		_gthis.init();
@@ -122,7 +124,7 @@ MainGoCss.prototype = {
 			_gthis.getDataSBG();
 		};
 		http.onError = function(error) {
-			console.log("src/MainGoCss.hx:85:","Failed to load SVG: " + error);
+			console.log("src/MainGoCss.hx:87:","Failed to load SVG: " + error);
 		};
 		http.request();
 	}
@@ -280,14 +282,15 @@ var cc_lets_GoBase = function(target,duration) {
 	this._easing = cc_lets_easing_Quad.get_easeOut();
 	this.DEBUG = true;
 	this.FRAME_RATE = 60;
-	this._id = "[lets.GoBase]" + cc_lets_GoBase.VERSION + "." + new Date().getTime();
+	this._VERSION = "2.1.0";
+	this._id = "[" + this.toString() + "]-" + this._VERSION + "-" + new Date().getTime();
 	this._seconds = duration;
 	this._target = target;
 	this._duration = this.getDuration(duration);
 	this._initTime = this._duration;
 	cc_lets_GoBase._tweens.push(this);
 	if(this.DEBUG) {
-		$global.console.log("New GoBase - _id: \"" + this._id + "\" / _duration: " + this._duration + " / _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
+		$global.console.log("New " + this.toString() + " - _id: \"" + this._id + "\" / _duration: " + this._duration + " / _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
 	}
 	haxe_Timer.delay($bind(this,this.init),1);
 };
@@ -443,15 +446,6 @@ cc_lets_GoBase.orbit = function(target,x,y,radius,speed) {
 	target["speed"] = speed;
 	target["radius"] = radius;
 	return _go;
-};
-cc_lets_GoBase.version = function() {
-	return cc_lets_GoBase.VERSION;
-};
-cc_lets_GoBase.toString = function() {
-	var _go = new cc_lets_GoBase(null,0);
-	var c = js_Boot.getClass(_go);
-	var className = c.__name__;
-	return className;
 };
 cc_lets_GoBase.prototype = {
 	width: function(value) {
@@ -678,12 +672,12 @@ cc_lets_GoBase.prototype = {
 	,init: function() {
 		if(cc_lets_GoBase._requestId == null) {
 			cc_lets_GoBase._requestId = window.requestAnimationFrame($bind(this,this.onEnterFrameHandler));
-			$global.console.info("GoSVG (" + cc_lets_GoBase.VERSION + ") Start frame animation (_requestId: " + cc_lets_GoBase._requestId + ")");
+			$global.console.info("[" + this.toString() + "]-" + this._VERSION + "- Start frame animation (_requestId: " + cc_lets_GoBase._requestId + ")");
 		}
 	}
 	,onEnterFrameHandler: function(time) {
 		if(cc_lets_GoBase._tweens.length <= 0) {
-			$global.console.info("GoSVG (" + cc_lets_GoBase.VERSION + ") Kill _requestId: " + cc_lets_GoBase._requestId);
+			$global.console.info("[" + this.toString() + "]-" + this._VERSION + "- Kill _requestId: " + cc_lets_GoBase._requestId);
 			window.cancelAnimationFrame(cc_lets_GoBase._requestId);
 			cc_lets_GoBase._requestId = null;
 			return;
@@ -706,7 +700,7 @@ cc_lets_GoBase.prototype = {
 		}
 		if(!this._isDelayDone) {
 			if(this.DEBUG) {
-				$global.console.warn("GoSVG (" + cc_lets_GoBase.VERSION + ") Should trigger only once: " + this._id + " / " + cc_lets_GoBase._requestId + " / " + cc_lets_GoBase._counter);
+				$global.console.warn("[" + this.toString() + "]-" + this._VERSION + "-Should trigger only once: " + this._id + " / " + cc_lets_GoBase._requestId + " / " + cc_lets_GoBase._counter);
 			}
 			if(Reflect.isFunction(this._options.onAnimationStart)) {
 				var func = this._options.onAnimationStart;
@@ -780,7 +774,7 @@ cc_lets_GoBase.prototype = {
 	}
 	,complete: function() {
 		if(this.DEBUG) {
-			$global.console.info("complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
+			$global.console.info("[" + this.toString() + "]-" + this._VERSION + "- Complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
 		}
 		if(this._isYoyo) {
 			var h = this._props.h;
@@ -817,7 +811,11 @@ cc_lets_GoBase.prototype = {
 		return new Date().getTime() | 0;
 	}
 	,getVersion: function() {
-		return cc_lets_GoBase.VERSION;
+		return this._VERSION;
+	}
+	,toString: function() {
+		var c = js_Boot.getClass(this);
+		return c.__name__;
 	}
 	,destroy: function() {
 		if(Lambda.has(cc_lets_GoBase._tweens,this)) {
@@ -836,18 +834,18 @@ cc_lets_GoBase.prototype = {
 	,__class__: cc_lets_GoBase
 };
 var cc_lets_GoCss = function(target,duration) {
-	this.VERSION = "2.1.0";
+	this.VERSION = "2.1.1";
 	cc_lets_GoBase.call(this,target,duration);
 	$global.console.log(this.getVersion());
+	$global.console.log(this.toString());
 };
 cc_lets_GoCss.__name__ = "cc.lets.GoCss";
-cc_lets_GoCss.version = function() {
-	var _go = new cc_lets_GoCss({ },0);
-	return _go.VERSION;
-};
 cc_lets_GoCss.__super__ = cc_lets_GoBase;
 cc_lets_GoCss.prototype = $extend(cc_lets_GoBase.prototype,{
-	__class__: cc_lets_GoCss
+	getVersion: function() {
+		return this.VERSION;
+	}
+	,__class__: cc_lets_GoCss
 });
 var cc_lets_easing_Quad = function() { };
 cc_lets_easing_Quad.__name__ = "cc.lets.easing.Quad";
@@ -1480,7 +1478,6 @@ Array.__name__ = "Array";
 Date.prototype.__class__ = Date;
 Date.__name__ = "Date";
 js_Boot.__toStr = ({ }).toString;
-cc_lets_GoBase.VERSION = "2.1.0";
 cc_lets_GoBase._tweens = [];
 cc_lets_GoBase._counter = 0;
 model_constants_App.NAME = "[RawGenius2024]";

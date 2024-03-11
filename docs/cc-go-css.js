@@ -82,7 +82,7 @@ var MainGoCss = function() {
 	this.elementMap = new haxe_ds_StringMap();
 	var _gthis = this;
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGoCss - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-10 17:58:59" + " ");
+		$global.console.info("MainGoCss - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-11 10:40:39" + " ");
 		var _go = new cc_lets_GoCss({ },0);
 		$global.console.log("toString(): " + _go.toString());
 		$global.console.log("getVersion(): " + _go.getVersion());
@@ -124,7 +124,7 @@ MainGoCss.prototype = {
 			_gthis.getDataSBG();
 		};
 		http.onError = function(error) {
-			console.log("src/MainGoCss.hx:87:","Failed to load SVG: " + error);
+			console.log("src/MainGoCss.hx:88:","Failed to load SVG: " + error);
 		};
 		http.request();
 	}
@@ -132,7 +132,13 @@ MainGoCss.prototype = {
 		var container = window.document.getElementById(this.containerID);
 		var astronaut = container.querySelector("#astronaut");
 		var rocket = container.querySelector("#rocket");
-		$global.console.log(astronaut);
+		var ring = container.querySelector("#ring");
+		var planet = container.querySelector("#planet");
+		$global.console.log(planet);
+		planet.classList.add("--raw-planet");
+		cc_lets_GoCss.to(astronaut,10).x(100).onComplete(function() {
+			$global.console.log(astronaut);
+		});
 	}
 	,__class__: MainGoCss
 };
@@ -199,9 +205,6 @@ StringTools.rtrim = function(s) {
 	} else {
 		return s;
 	}
-};
-StringTools.trim = function(s) {
-	return StringTools.ltrim(StringTools.rtrim(s));
 };
 var cc_lets_Easing = function() { };
 cc_lets_Easing.__name__ = "cc.lets.Easing";
@@ -288,11 +291,18 @@ var cc_lets_GoBase = function(target,duration) {
 	this._target = target;
 	this._duration = this.getDuration(duration);
 	this._initTime = this._duration;
+	this._transform = this.getDefaultTransform();
+	this._startTransform = this.getDefaultTransform();
+	this._startTransform = this.getStartTransform();
 	cc_lets_GoBase._tweens.push(this);
 	if(this.DEBUG) {
 		$global.console.log("New " + this.toString() + " - _id: \"" + this._id + "\" / _duration: " + this._duration + " / _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
 	}
-	haxe_Timer.delay($bind(this,this.init),1);
+	if(duration == -1) {
+		this.init();
+	} else {
+		haxe_Timer.delay($bind(this,this.init),1);
+	}
 };
 cc_lets_GoBase.__name__ = "cc.lets.GoBase";
 cc_lets_GoBase.to = function(target,duration) {
@@ -322,31 +332,12 @@ cc_lets_GoBase.wiggle = function(target,x,y,wiggleRoom) {
 	_go._isWiggle = true;
 	var max = wiggleRoom;
 	var min = -wiggleRoom;
-	var value = x + Math.random() * (max - min) + min;
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"x")) {
-		objValue = Reflect.getProperty(_go._target,"x");
-	}
-	var _range = { key : "x", from : _go._isFrom ? value : objValue, to : !_go._isFrom ? value : objValue};
-	_go._props.h["x"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var value = y + Math.random() * (max - min) + min;
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"y")) {
-		objValue = Reflect.getProperty(_go._target,"y");
-	}
-	var _range = { key : "y", from : _go._isFrom ? value : objValue, to : !_go._isFrom ? value : objValue};
-	_go._props.h["y"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	_go._easing = cc_lets_easing_Sine.get_easeInOut();
-	_go._options.onComplete = function() {
+	_go.prop("x",x + Math.random() * (max - min) + min);
+	_go.prop("y",y + Math.random() * (max - min) + min);
+	_go.ease(cc_lets_easing_Sine.get_easeInOut());
+	_go.onComplete(function() {
 		cc_lets_GoBase.wiggle(target,x,y,wiggleRoom);
-	};
-	_go._options.onCompleteParams = null;
+	});
 	return _go;
 };
 cc_lets_GoBase.wiggleProp = function(target,prop,value,wiggleRoom) {
@@ -357,89 +348,23 @@ cc_lets_GoBase.wiggleProp = function(target,prop,value,wiggleRoom) {
 	_go._isWiggle = true;
 	var max = wiggleRoom;
 	var min = -wiggleRoom;
-	var value1 = value + Math.random() * (max - min) + min;
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,prop)) {
-		objValue = Reflect.getProperty(_go._target,prop);
-	}
-	var _range = { key : prop, from : _go._isFrom ? value1 : objValue, to : !_go._isFrom ? value1 : objValue};
-	_go._props.h[prop] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	_go._easing = cc_lets_easing_Sine.get_easeInOut();
-	_go._options.onComplete = function() {
+	_go.prop(prop,value + Math.random() * (max - min) + min);
+	_go.ease(cc_lets_easing_Sine.get_easeInOut());
+	_go.onComplete(function() {
 		cc_lets_GoBase.wiggleProp(target,prop,value,wiggleRoom);
-	};
-	_go._options.onCompleteParams = null;
+	});
 	return _go;
 };
 cc_lets_GoBase.orbit = function(target,x,y,radius,speed) {
 	var _go = new cc_lets_GoBase(target,1 + Math.random());
 	_go._isOrbit = true;
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"x")) {
-		objValue = Reflect.getProperty(_go._target,"x");
-	}
-	var _range = { key : "x", from : _go._isFrom ? x : objValue, to : !_go._isFrom ? x : objValue};
-	_go._props.h["x"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"y")) {
-		objValue = Reflect.getProperty(_go._target,"y");
-	}
-	var _range = { key : "y", from : _go._isFrom ? y : objValue, to : !_go._isFrom ? y : objValue};
-	_go._props.h["y"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"cx")) {
-		objValue = Reflect.getProperty(_go._target,"cx");
-	}
-	var _range = { key : "cx", from : _go._isFrom ? x : objValue, to : !_go._isFrom ? x : objValue};
-	_go._props.h["cx"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"cy")) {
-		objValue = Reflect.getProperty(_go._target,"cy");
-	}
-	var _range = { key : "cy", from : _go._isFrom ? y : objValue, to : !_go._isFrom ? y : objValue};
-	_go._props.h["cy"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"radius")) {
-		objValue = Reflect.getProperty(_go._target,"radius");
-	}
-	var _range = { key : "radius", from : _go._isFrom ? radius : objValue, to : !_go._isFrom ? radius : objValue};
-	_go._props.h["radius"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"speed")) {
-		objValue = Reflect.getProperty(_go._target,"speed");
-	}
-	var _range = { key : "speed", from : _go._isFrom ? speed : objValue, to : !_go._isFrom ? speed : objValue};
-	_go._props.h["speed"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
-	var objValue = 0.0;
-	if(Object.prototype.hasOwnProperty.call(_go._target,"angle")) {
-		objValue = Reflect.getProperty(_go._target,"angle");
-	}
-	var _range = { key : "angle", from : _go._isFrom ? speed : objValue, to : !_go._isFrom ? speed : objValue};
-	_go._props.h["angle"] = _range;
-	if(_go._isFrom) {
-		_go.updateProperties(0);
-	}
+	_go.prop("x",x);
+	_go.prop("y",y);
+	_go.prop("cx",x);
+	_go.prop("cy",y);
+	_go.prop("radius",radius);
+	_go.prop("speed",speed);
+	_go.prop("angle",speed);
 	target["cx"] = x;
 	target["cy"] = y;
 	target["angle"] = 0;
@@ -448,175 +373,59 @@ cc_lets_GoBase.orbit = function(target,x,y,radius,speed) {
 	return _go;
 };
 cc_lets_GoBase.prototype = {
-	width: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"width")) {
-			objValue = Reflect.getProperty(this._target,"width");
-		}
-		var _range = { key : "width", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["width"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+	_to: function(target,duration) {
+		var _go = new cc_lets_GoBase(target,duration);
+		_go._isFrom = false;
+		return _go;
+	}
+	,width: function(value) {
+		this.prop("width",value);
 		return this;
 	}
 	,height: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"height")) {
-			objValue = Reflect.getProperty(this._target,"height");
-		}
-		var _range = { key : "height", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["height"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("height",value);
 		return this;
 	}
 	,x: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"x")) {
-			objValue = Reflect.getProperty(this._target,"x");
-		}
-		var _range = { key : "x", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["x"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("x",value);
 		return this;
 	}
 	,y: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"y")) {
-			objValue = Reflect.getProperty(this._target,"y");
-		}
-		var _range = { key : "y", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["y"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("y",value);
 		return this;
 	}
 	,z: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"z")) {
-			objValue = Reflect.getProperty(this._target,"z");
-		}
-		var _range = { key : "z", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["z"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("z",value);
 		return this;
 	}
 	,pos: function(x,y,z) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"x")) {
-			objValue = Reflect.getProperty(this._target,"x");
-		}
-		var _range = { key : "x", from : this._isFrom ? x : objValue, to : !this._isFrom ? x : objValue};
-		this._props.h["x"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"y")) {
-			objValue = Reflect.getProperty(this._target,"y");
-		}
-		var _range = { key : "y", from : this._isFrom ? y : objValue, to : !this._isFrom ? y : objValue};
-		this._props.h["y"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("x",x);
+		this.prop("y",y);
 		if(z != null) {
-			var objValue = 0.0;
-			if(Object.prototype.hasOwnProperty.call(this._target,"z")) {
-				objValue = Reflect.getProperty(this._target,"z");
-			}
-			var _range = { key : "z", from : this._isFrom ? z : objValue, to : !this._isFrom ? z : objValue};
-			this._props.h["z"] = _range;
-			if(this._isFrom) {
-				this.updateProperties(0);
-			}
+			this.prop("z",z);
 		}
 		return this;
 	}
 	,rotation: function(degree) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"rotation")) {
-			objValue = Reflect.getProperty(this._target,"rotation");
-		}
-		var _range = { key : "rotation", from : this._isFrom ? degree : objValue, to : !this._isFrom ? degree : objValue};
-		this._props.h["rotation"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("rotation",degree);
 		return this;
 	}
 	,degree: function(degree) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"rotation")) {
-			objValue = Reflect.getProperty(this._target,"rotation");
-		}
-		var _range = { key : "rotation", from : this._isFrom ? degree : objValue, to : !this._isFrom ? degree : objValue};
-		this._props.h["rotation"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("rotation",degree);
 		return this;
 	}
 	,radians: function(degree) {
-		var value = degree * Math.PI / 180;
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"rotation")) {
-			objValue = Reflect.getProperty(this._target,"rotation");
-		}
-		var _range = { key : "rotation", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["rotation"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("rotation",degree * Math.PI / 180);
 		return this;
 	}
 	,alpha: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"alpha")) {
-			objValue = Reflect.getProperty(this._target,"alpha");
-		}
-		var _range = { key : "alpha", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["alpha"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("alpha",value);
 		return this;
 	}
 	,scale: function(value) {
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"scaleX")) {
-			objValue = Reflect.getProperty(this._target,"scaleX");
-		}
-		var _range = { key : "scaleX", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["scaleX"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"scaleY")) {
-			objValue = Reflect.getProperty(this._target,"scaleY");
-		}
-		var _range = { key : "scaleY", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["scaleY"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
-		var objValue = 0.0;
-		if(Object.prototype.hasOwnProperty.call(this._target,"scale")) {
-			objValue = Reflect.getProperty(this._target,"scale");
-		}
-		var _range = { key : "scale", from : this._isFrom ? value : objValue, to : !this._isFrom ? value : objValue};
-		this._props.h["scale"] = _range;
-		if(this._isFrom) {
-			this.updateProperties(0);
-		}
+		this.prop("scaleX",value);
+		this.prop("scaleY",value);
+		this.prop("scale",value);
 		return this;
 	}
 	,yoyo: function() {
@@ -718,60 +527,6 @@ cc_lets_GoBase.prototype = {
 			this.updateProperties(progressed);
 		}
 	}
-	,updateProperties: function(time) {
-		if(Reflect.isFunction(this._options.onUpdate)) {
-			var func = this._options.onUpdate;
-			var arr = this._options.onUpdateParams != null ? this._options.onUpdateParams : [];
-			func.apply(func,[arr]);
-		}
-		if(this._props == null) {
-			return;
-		}
-		var h = this._props.h;
-		var n_h = h;
-		var n_keys = Object.keys(h);
-		var n_length = n_keys.length;
-		var n_current = 0;
-		while(n_current < n_length) {
-			var n = n_keys[n_current++];
-			var range = this._props.h[n];
-			var value = this._easing.ease(time,range.from,range.to - range.from,this._duration);
-			switch(n) {
-			case "rotate":
-				this._transform.rotate.degree = value;
-				var _setProperties = this.setProperties("rotate");
-				break;
-			case "scale":
-				this._transform.scale.x = value;
-				this._transform.scale.y = value;
-				var _setProperties1 = this.setProperties("scale");
-				break;
-			case "x":
-				this._transform.translate.x = value;
-				var _setProperties2 = this.setProperties("x");
-				break;
-			case "y":
-				this._transform.translate.y = value;
-				var _setProperties3 = this.setProperties("y");
-				break;
-			default:
-			}
-		}
-	}
-	,setProperties: function(dir) {
-		var str = "";
-		switch(dir) {
-		case "rotate":
-			break;
-		case "x":
-			break;
-		case "y":
-			break;
-		default:
-			console.log("cc/lets/GoBase.hx:646:","case '" + dir + "': trace ('" + dir + "');");
-		}
-		return StringTools.trim(str);
-	}
 	,complete: function() {
 		if(this.DEBUG) {
 			$global.console.info("[" + this.toString() + "]-" + this._VERSION + "- Complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
@@ -810,6 +565,75 @@ cc_lets_GoBase.prototype = {
 	,getTimer: function() {
 		return new Date().getTime() | 0;
 	}
+	,updateProperties: function(time) {
+		if(Reflect.isFunction(this._options.onUpdate)) {
+			var func = this._options.onUpdate;
+			var arr = this._options.onUpdateParams != null ? this._options.onUpdateParams : [];
+			func.apply(func,[arr]);
+		}
+		if(this._props == null) {
+			return;
+		}
+		var h = this._props.h;
+		var n_h = h;
+		var n_keys = Object.keys(h);
+		var n_length = n_keys.length;
+		var n_current = 0;
+		while(n_current < n_length) {
+			var n = n_keys[n_current++];
+			var range = this._props.h[n];
+			var value = this._easing.ease(time,range.from,range.to - range.from,this._duration);
+			switch(n) {
+			case "rotate":
+				this._transform.degree = value;
+				break;
+			case "scale":
+				this._transform.scale = value;
+				break;
+			case "x":
+				this._transform.x = value;
+				break;
+			case "y":
+				this._transform.y = value;
+				break;
+			default:
+			}
+			this.setProperties(n,value);
+		}
+	}
+	,setProperties: function(dir,value) {
+		this._target.setAttribute(dir,value);
+		switch(dir) {
+		case "rotate":
+			$global.console.info("rotate, " + value);
+			break;
+		case "scale":
+			$global.console.info("scale, " + value);
+			break;
+		case "x":
+			$global.console.info("x, " + value);
+			break;
+		case "y":
+			$global.console.info("y, " + value);
+			break;
+		default:
+			console.log("cc/lets/GoBase.hx:687:","case '" + dir + "': trace ('" + dir + "');");
+		}
+	}
+	,getStartTransform: function() {
+		var _transform = this.getDefaultTransform();
+		var el = this._target;
+		_transform.x = el.clientLeft;
+		_transform.y = el.clientTop;
+		_transform.w = el.clientWidth;
+		_transform.h = el.clientHeight;
+		_transform.cx = el.clientLeft + el.clientWidth / 2;
+		_transform.cy = el.clientTop + el.clientHeight / 2;
+		return _transform;
+	}
+	,getDefaultTransform: function() {
+		return { x : 0, y : 0, w : 0, h : 0, cx : 0, cy : 0, degree : 0, scale : 0};
+	}
 	,getVersion: function() {
 		return this._VERSION;
 	}
@@ -835,14 +659,37 @@ cc_lets_GoBase.prototype = {
 };
 var cc_lets_GoCss = function(target,duration) {
 	this.VERSION = "2.1.1";
-	cc_lets_GoBase.call(this,target,duration);
-	$global.console.log(this.getVersion());
-	$global.console.log(this.toString());
+	cc_lets_GoBase.call(this,target,-1);
+	this.__duration = duration;
 };
 cc_lets_GoCss.__name__ = "cc.lets.GoCss";
+cc_lets_GoCss.to = function(target,duration) {
+	var _go = new cc_lets_GoCss(target,duration);
+	_go._isFrom = false;
+	return _go;
+};
 cc_lets_GoCss.__super__ = cc_lets_GoBase;
 cc_lets_GoCss.prototype = $extend(cc_lets_GoBase.prototype,{
-	getVersion: function() {
+	setProperties: function(dir,value) {
+		this._target.setAttribute(dir,value);
+		switch(dir) {
+		case "rotate":
+			$global.console.warn("rotate, " + value);
+			break;
+		case "scale":
+			$global.console.warn("scale, " + value);
+			break;
+		case "x":
+			this._target.classList.add("x-class");
+			break;
+		case "y":
+			$global.console.warn("y, " + value);
+			break;
+		default:
+			console.log("cc/lets/GoCss.hx:63:","case '" + dir + "': trace ('" + dir + "');");
+		}
+	}
+	,getVersion: function() {
 		return this.VERSION;
 	}
 	,__class__: cc_lets_GoCss

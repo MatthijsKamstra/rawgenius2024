@@ -8,6 +8,7 @@ import haxe.Http;
 import haxe.Log;
 import js.Browser.*;
 import js.Syntax;
+import js.html.DOMTokenList;
 import js.html.DivElement;
 import js.html.Image;
 import js.html.svg.Element;
@@ -94,8 +95,18 @@ class MainGoCss {
 		var container:DivElement = cast document.getElementById(containerID);
 		var astronaut:SVGElement = cast container.querySelector("#astronaut");
 		var rocket:SVGElement = cast container.querySelector("#rocket");
+		var ring:SVGElement = cast container.querySelector("#ring");
+		var planet:SVGElement = cast container.querySelector("#planet");
 
-		console.log(astronaut);
+		// console.log(astronaut);
+		console.log(planet);
+
+		// var list:DOMTokenList = planet.classList;
+		// // list.push('test');
+		// console.log(list);
+		// list.add('test');
+		planet.classList.add('--raw-planet');
+
 		// console.log(Type.typeof(astronaut));
 
 		// console.log(astronaut.getTransformToElement);
@@ -115,8 +126,8 @@ class MainGoCss {
 
 		// astronaut.setAttribute('transform', 'rotate(0) translate(550 300)');
 		// astronaut.setAttribute('transform', 'rotate(0)');
-		GoCss.to(astronaut, 2);
-		// GoCss.to(astronaut, 2).x(100).onComplete(() -> console.log(astronaut));
+		// GoCss.to(astronaut, 2);
+		GoCss.to(astronaut, 10).x(100).onComplete(() -> console.log(astronaut));
 		// GoCss.to(astronaut, 2).y(100).onComplete(() -> console.log(astronaut));
 		// GoCss.to(astronaut, 2).y(-100).onComplete(() -> console.log(astronaut));
 		// GoCss.to(astronaut, 2).x(100).y(-100).onComplete(() -> console.log(astronaut));

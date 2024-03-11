@@ -11,56 +11,7 @@
 		integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 	<style>
-		#container-hero-svg2 {
-			/* position: absolute; */
-		}
 
-
-		/* The animation code*/
-		/* @keyframes example {
-			from {
-				background-color: red;
-			}
-
-			to {
-				background-color: yellow;
-			}
-		} */
-
-		/*   transition: all var(--icon-transition-duration) ease-in-out; */
-		@keyframes floater {
-			0% {
-				/* top: -10%; */
-				transform: translateY(-10%);
-				/* transition: ease 0.5s; */
-			}
-
-			50% {
-				/* top: 10%; */
-				transform: translateY(10%);
-				/* transition: ease 0.5s; */
-			}
-
-			100% {
-				/* top: -10%; */
-				transform: translateY(-10%);
-				/* transition: ease 0.5s; */
-			}
-		}
-
-
-		#ring {
-			position: absolute;
-		}
-
-		.raw-planet {
-			/* transform: translate(295px, 115px); */
-			/* animation-name: example; */
-			animation: floater 10s infinite;
-			transition: ease-in-out;
-			/* animation-duration: 4s;
-			animation-iteration-count: infinite; */
-		}
 	</style>
 
 	<link href="style.css" rel="stylesheet">
@@ -70,15 +21,32 @@
 
 <body>
 	<main>
+		<div id="container-hero-html" class="hero">
+			<div id="planet"><img src="images/planet2.png"></div>
+			<div id="saturnring"><img src="images/ring.png"></div>
+			<div id="astronaut"><img src="images/astronaut.png"></div>
+			<div id="rocket"><img src="images/rocket.png"></div>
+		</div>
+
+		<div class="spacer"></div>
+
+		<div id="container-hero-svg" class="hero container-svg">
+			<img src="images/svg/rawgenius_2024_4.min.svg" width="100%">
+		</div>
+
+		<div class="spacer"></div>
 
 		<div id="container-hero-svg2" class="hero container-svg">
 			<img src="images/svg/fake.svg">
 		</div>
 
-
+		<div class="spacer"></div>
 
 	</main>
 
+	<script src="_cc-go.js"></script>
+	<script src="_cc-go-el.js"></script>
+	<script src="_cc-go-svg.js"></script>
 	<script src="cc-go-css.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

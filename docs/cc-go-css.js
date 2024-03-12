@@ -82,10 +82,7 @@ var MainGoCss = function() {
 	this.elementMap = new haxe_ds_StringMap();
 	var _gthis = this;
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGoCss - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-11 10:40:39" + " ");
-		var _go = new cc_lets_GoCss({ },0);
-		$global.console.log("toString(): " + _go.toString());
-		$global.console.log("getVersion(): " + _go.getVersion());
+		$global.console.info("MainGoCss - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-12 14:47:16" + " ");
 		_gthis.setupListeners();
 		_gthis.setContainer();
 		_gthis.init();
@@ -114,14 +111,12 @@ MainGoCss.prototype = {
 	,init: function() {
 	}
 	,convertSrcToSVG: function() {
-		var _gthis = this;
 		var container = window.document.getElementById(this.containerID);
 		var image = container.querySelector("img");
 		var url = image.src;
 		var http = new haxe_http_HttpJs(url);
 		http.onData = function(data) {
 			container.innerHTML = data;
-			_gthis.getDataSBG();
 		};
 		http.onError = function(error) {
 			console.log("src/MainGoCss.hx:88:","Failed to load SVG: " + error);
@@ -204,6 +199,55 @@ StringTools.rtrim = function(s) {
 		return HxOverrides.substr(s,0,l - r);
 	} else {
 		return s;
+	}
+};
+var ValueType = $hxEnums["ValueType"] = { __ename__:true,__constructs__:null
+	,TNull: {_hx_name:"TNull",_hx_index:0,__enum__:"ValueType",toString:$estr}
+	,TInt: {_hx_name:"TInt",_hx_index:1,__enum__:"ValueType",toString:$estr}
+	,TFloat: {_hx_name:"TFloat",_hx_index:2,__enum__:"ValueType",toString:$estr}
+	,TBool: {_hx_name:"TBool",_hx_index:3,__enum__:"ValueType",toString:$estr}
+	,TObject: {_hx_name:"TObject",_hx_index:4,__enum__:"ValueType",toString:$estr}
+	,TFunction: {_hx_name:"TFunction",_hx_index:5,__enum__:"ValueType",toString:$estr}
+	,TClass: ($_=function(c) { return {_hx_index:6,c:c,__enum__:"ValueType",toString:$estr}; },$_._hx_name="TClass",$_.__params__ = ["c"],$_)
+	,TEnum: ($_=function(e) { return {_hx_index:7,e:e,__enum__:"ValueType",toString:$estr}; },$_._hx_name="TEnum",$_.__params__ = ["e"],$_)
+	,TUnknown: {_hx_name:"TUnknown",_hx_index:8,__enum__:"ValueType",toString:$estr}
+};
+ValueType.__constructs__ = [ValueType.TNull,ValueType.TInt,ValueType.TFloat,ValueType.TBool,ValueType.TObject,ValueType.TFunction,ValueType.TClass,ValueType.TEnum,ValueType.TUnknown];
+var Type = function() { };
+Type.__name__ = "Type";
+Type.typeof = function(v) {
+	switch(typeof(v)) {
+	case "boolean":
+		return ValueType.TBool;
+	case "function":
+		if(v.__name__ || v.__ename__) {
+			return ValueType.TObject;
+		}
+		return ValueType.TFunction;
+	case "number":
+		if(Math.ceil(v) == v % 2147483648.0) {
+			return ValueType.TInt;
+		}
+		return ValueType.TFloat;
+	case "object":
+		if(v == null) {
+			return ValueType.TNull;
+		}
+		var e = v.__enum__;
+		if(e != null) {
+			return ValueType.TEnum($hxEnums[e]);
+		}
+		var c = js_Boot.getClass(v);
+		if(c != null) {
+			return ValueType.TClass(c);
+		}
+		return ValueType.TObject;
+	case "string":
+		return ValueType.TClass(String);
+	case "undefined":
+		return ValueType.TNull;
+	default:
+		return ValueType.TUnknown;
 	}
 };
 var cc_lets_Easing = function() { };
@@ -294,15 +338,6 @@ var cc_lets_GoBase = function(target,duration) {
 	this._transform = this.getDefaultTransform();
 	this._startTransform = this.getDefaultTransform();
 	this._startTransform = this.getStartTransform();
-	cc_lets_GoBase._tweens.push(this);
-	if(this.DEBUG) {
-		$global.console.log("New " + this.toString() + " - _id: \"" + this._id + "\" / _duration: " + this._duration + " / _initTime: " + this._initTime + " / _tweens.length: " + cc_lets_GoBase._tweens.length);
-	}
-	if(duration == -1) {
-		this.init();
-	} else {
-		haxe_Timer.delay($bind(this,this.init),1);
-	}
 };
 cc_lets_GoBase.__name__ = "cc.lets.GoBase";
 cc_lets_GoBase.to = function(target,duration) {
@@ -617,18 +652,28 @@ cc_lets_GoBase.prototype = {
 			$global.console.info("y, " + value);
 			break;
 		default:
-			console.log("cc/lets/GoBase.hx:687:","case '" + dir + "': trace ('" + dir + "');");
+			console.log("cc/lets/GoBase.hx:690:","case '" + dir + "': trace ('" + dir + "');");
 		}
 	}
 	,getStartTransform: function() {
 		var _transform = this.getDefaultTransform();
+		$global.console.log(Type.typeof(this._target));
 		var el = this._target;
+		$global.console.log(Type.typeof(this._target));
+		return _transform;
+	}
+	,getStartTransformDiv: function() {
+		var _transform = this.getDefaultTransform();
+		var el = this._target;
+		$global.console.warn(el);
+		$global.console.warn(el.clientLeft);
 		_transform.x = el.clientLeft;
 		_transform.y = el.clientTop;
 		_transform.w = el.clientWidth;
 		_transform.h = el.clientHeight;
 		_transform.cx = el.clientLeft + el.clientWidth / 2;
 		_transform.cy = el.clientTop + el.clientHeight / 2;
+		$global.console.warn(_transform);
 		return _transform;
 	}
 	,getDefaultTransform: function() {
@@ -658,6 +703,7 @@ cc_lets_GoBase.prototype = {
 	,__class__: cc_lets_GoBase
 };
 var cc_lets_GoCss = function(target,duration) {
+	this.dynamicStyles = null;
 	this.VERSION = "2.1.1";
 	cc_lets_GoBase.call(this,target,-1);
 	this.__duration = duration;
@@ -670,23 +716,38 @@ cc_lets_GoCss.to = function(target,duration) {
 };
 cc_lets_GoCss.__super__ = cc_lets_GoBase;
 cc_lets_GoCss.prototype = $extend(cc_lets_GoBase.prototype,{
-	setProperties: function(dir,value) {
-		this._target.setAttribute(dir,value);
+	addAnimation: function(body) {
+		if(this.dynamicStyles == null) {
+			this.dynamicStyles = window.document.createElement("style");
+			this.dynamicStyles.type = "text/css";
+			this.dynamicStyles.title = "inject animation";
+			window.document.head.appendChild(this.dynamicStyles);
+		}
+		this.dynamicStyles.innerHTML = body;
+	}
+	,setProperties: function(dir,value) {
+		var el = this._target;
+		el.setAttribute(dir,"" + value);
 		switch(dir) {
 		case "rotate":
-			$global.console.warn("rotate, " + value);
+			el.classList.add("rotate-class");
 			break;
 		case "scale":
-			$global.console.warn("scale, " + value);
+			el.classList.add("scale-class");
 			break;
 		case "x":
-			this._target.classList.add("x-class");
+			el.classList.add("x-class2");
+			$global.console.log(this._startTransform);
+			this.addAnimation("\n@keyframes floater {\n\t0% {\n\t\ttransform: translateY(-10%);\n\t}\n\t50% {\n\t\ttransform: translateY(10%);\n\t}\n\t100% {\n\t\ttransform: translateY(-10%);\n\t}\n}\n    ");
+			el.style.animationName = "floater";
+			el.style.animationDuration = "10s";
+			el.style.animationIterationCount = "infinite";
 			break;
 		case "y":
-			$global.console.warn("y, " + value);
+			el.classList.add("y-class");
 			break;
 		default:
-			console.log("cc/lets/GoCss.hx:63:","case '" + dir + "': trace ('" + dir + "');");
+			console.log("cc/lets/GoCss.hx:115:","case '" + dir + "': trace ('" + dir + "');");
 		}
 	}
 	,getVersion: function() {
@@ -833,33 +894,6 @@ haxe_Exception.prototype = $extend(Error.prototype,{
 	,__class__: haxe_Exception
 	,__properties__: {get_native:"get_native"}
 });
-var haxe_Timer = function(time_ms) {
-	var me = this;
-	this.id = setInterval(function() {
-		me.run();
-	},time_ms);
-};
-haxe_Timer.__name__ = "haxe.Timer";
-haxe_Timer.delay = function(f,time_ms) {
-	var t = new haxe_Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-};
-haxe_Timer.prototype = {
-	stop: function() {
-		if(this.id == null) {
-			return;
-		}
-		clearInterval(this.id);
-		this.id = null;
-	}
-	,run: function() {
-	}
-	,__class__: haxe_Timer
-};
 var haxe_ValueException = function(value,previous,native) {
 	haxe_Exception.call(this,String(value),previous,native);
 	this.value = value;

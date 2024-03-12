@@ -33,9 +33,9 @@ class MainGoCss {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			console.info('MainGoCss - ${App.NAME} Dom ready :: build: ${App.getBuildDate()} ');
 
-			var _go = new GoCss({}, 0);
-			console.log('toString(): ' + _go.toString());
-			console.log('getVersion(): ' + _go.getVersion());
+			// var _go = new GoCss({}, -1);
+			// console.log('toString(): ' + _go.toString());
+			// console.log('getVersion(): ' + _go.getVersion());
 
 			setupListeners();
 
@@ -80,7 +80,7 @@ class MainGoCss {
 			// use the svg into the element
 			container.innerHTML = data;
 
-			getDataSBG();
+			// getDataSBG();
 		};
 		// Define a callback function to handle errors
 		http.onError = function(error:String) {

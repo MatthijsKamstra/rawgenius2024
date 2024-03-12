@@ -89,8 +89,7 @@ var MainGoSVG = function() {
 	this.elementMap = new haxe_ds_StringMap();
 	var _gthis = this;
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		$global.console.info("MainGoSVG - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-11 10:40:38" + " ");
-		$global.console.info(GoSVG.version());
+		$global.console.info("MainGoSVG - " + model_constants_App.NAME + " Dom ready :: build: " + "2024-03-12 14:47:14" + " ");
 		_gthis.setupListeners();
 		_gthis.setContainer();
 		_gthis.init();
